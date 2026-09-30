@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import models  # noqa: F401  (isse tables register hoti hain)
+from auth_routes import router as auth_router
 from database import Base, engine
 
-# Tables nahi bani hain toh bana deta hai
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="RAAHIX API")
@@ -16,6 +16,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth_router)
 
 
 @app.get("/api/health")

@@ -1,1 +1,3 @@
-# RAAHIX`nAI travel companion: plan trips, explore places, track your budget.
+# RAAHIX
+
+AI travel companion: plan trips, explore places, track your budget.

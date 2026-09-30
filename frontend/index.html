@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAAHIX — Your AI Travel Companion</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+
+        <!-- TOP CATEGORIES -->
+        <header class="topbar">
+            <div class="category-scroll">
+                <a href="explore.html?cat=Stays" class="category"><span class="category-icon stay" data-icon="bed"></span>Stays</a>
+                <button class="category" disabled title="Coming soon"><span class="category-icon flight" data-icon="plane"></span>Flights</button>
+                <a href="explore.html?cat=Restaurants" class="category"><span class="category-icon food" data-icon="utensils"></span>Eats</a>
+                <a href="explore.html?cat=Experiences" class="category"><span class="category-icon experience" data-icon="sparkles"></span>Experiences</a>
+                <button class="category" disabled title="Coming soon"><span class="category-icon event" data-icon="ticket"></span>Events</button>
+                <a href="dashboard.html" class="category"><span class="category-icon trip" data-icon="briefcase"></span>Trips</a>
+            </div>
+        </header>
+
+        <section class="content-area">
+
+            <!-- WELCOME -->
+            <div class="welcome-section">
+                <div class="welcome-icon" data-icon="sparkles"></div>
+                <p class="eyebrow">YOUR PERSONAL AI TRAVEL COMPANION</p>
+                <h1>Plan less. <span>Travel more.</span></h1>
+                <p class="welcome-text">
+                    Tell RAAHIX where you want to go, what you love,
+                    and how you like to travel. We'll help create
+                    the journey around you.
+                </p>
+                <a href="create-trip.html" class="setup-btn">Start planning <span data-icon="arrow-right"></span></a>
+            </div>
+
+            <!-- QUICK CARDS -->
+            <div class="quick-cards">
+
+                <a href="assistant.html" class="quick-card assistant-card">
+                    <div class="card-visual">
+                        <div class="voice-circle" data-icon="voice"></div>
+                    </div>
+                    <div class="quick-card-content">
+                        <h3>Ask RAAHIX</h3>
+                        <p>Get personalized travel ideas from your AI assistant.</p>
+                    </div>
+                    <span class="arrow" data-icon="arrow-right"></span>
+                </a>
+
+                <a href="create-trip.html" class="quick-card itinerary-card">
+                    <div class="card-visual">
+                        <div class="mini-itinerary">
+                            <strong>GOA</strong>
+                            <small>5 Day Itinerary</small>
+                            <div class="mini-lines"><i></i><i></i><i></i></div>
+                        </div>
+                    </div>
+                    <div class="quick-card-content">
+                        <h3>Plan a trip</h3>
+                        <p>Build a personalized itinerary in minutes.</p>
+                    </div>
+                    <span class="arrow" data-icon="arrow-right"></span>
+                </a>
+
+                <a href="explore.html" class="quick-card explore-card">
+                    <div class="card-visual">
+                        <div class="destination-pills">
+                            <span data-icon="mountain"></span>
+                            <span data-icon="utensils"></span>
+                            <span data-icon="waves"></span>
+                        </div>
+                    </div>
+                    <div class="quick-card-content">
+                        <h3>Explore places</h3>
+                        <p>Discover destinations and experiences you'll love.</p>
+                    </div>
+                    <span class="arrow" data-icon="arrow-right"></span>
+                </a>
+
+                <a href="budget.html" class="quick-card budget-card">
+                    <div class="card-visual">
+                        <div class="receipt">
+                            <small>TRIP BUDGET</small>
+                            <strong>₹25,000</strong>
+                            <div></div>
+                            <i></i>
+                            <i></i>
+                        </div>
+                    </div>
+                    <div class="quick-card-content">
+                        <h3>Track your budget</h3>
+                        <p>Keep your travel expenses organized.</p>
+                    </div>
+                    <span class="arrow" data-icon="arrow-right"></span>
+                </a>
+
+            </div>
+
+            <!-- DESTINATIONS -->
+            <section class="discover-section">
+
+                <div class="section-header">
+                    <div>
+                        <p class="eyebrow">GET INSPIRED</p>
+                        <h2>Where will you go next?</h2>
+                    </div>
+                    <a href="explore.html" class="view-all">View all →</a>
+                </div>
+
+                <div class="destination-grid">
+
+                    <article class="destination-card">
+                        <div class="destination-image goa"><span>GOA</span></div>
+                        <div class="destination-details">
+                            <h3>Goa</h3>
+                            <p>Beaches · Nightlife · Relaxation</p>
+                        </div>
+                    </article>
+
+                    <article class="destination-card">
+                        <div class="destination-image manali"><span>MANALI</span></div>
+                        <div class="destination-details">
+                            <h3>Manali</h3>
+                            <p>Mountains · Adventure · Nature</p>
+                        </div>
+                    </article>
+
+                    <article class="destination-card">
+                        <div class="destination-image jaipur"><span>JAIPUR</span></div>
+                        <div class="destination-details">
+                            <h3>Jaipur</h3>
+                            <p>Heritage · Culture · Food</p>
+                        </div>
+                    </article>
+
+                    <article class="destination-card">
+                        <div class="destination-image kerala"><span>KERALA</span></div>
+                        <div class="destination-details">
+                            <h3>Kerala</h3>
+                            <p>Backwaters · Nature · Culture</p>
+                        </div>
+                    </article>
+
+                </div>
+
+            </section>
+
+            <!-- AI BANNER -->
+            <section class="ai-banner">
+                <div class="ai-banner-icon" data-icon="sparkles"></div>
+                <div class="ai-banner-content">
+                    <p class="eyebrow">RAAHIX AI</p>
+                    <h2>Not sure where to go?</h2>
+                    <p>
+                        Tell us your mood, budget and available time.
+                        RAAHIX will help you discover your next adventure.
+                    </p>
+                </div>
+                <a href="assistant.html" class="ai-banner-btn">Ask RAAHIX →</a>
+            </section>
+
+        </section>
+
+
+        <!-- CHAT INPUT -->
+        <div class="chat-area">
+            <div class="chat-box">
+                <button class="chat-add" aria-label="Add" data-icon="plus"></button>
+                <input type="text" placeholder="Ask RAAHIX...">
+                <button class="chat-mic" aria-label="Voice" data-icon="mic"></button>
+                <button class="chat-send" aria-label="Send" data-icon="arrow-up"></button>
+            </div>
+            <p class="chat-note">
+                RAAHIX can help with destinations, itineraries, budgets, weather and travel ideas.
+            </p>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="app-footer">
+            <span>© 2026 RAAHIX</span>
+            <div>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Help</a>
+            </div>
+        </footer>
+
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

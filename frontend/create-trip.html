@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create a trip — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area form-page">
+
+            <div class="page-head">
+                <div>
+                    <h1>Create a trip</h1>
+                    <p class="page-sub">Tell us the basics. You can change everything later.</p>
+                </div>
+            </div>
+
+            <form class="trip-form" id="tripForm" novalidate>
+
+                <div class="field">
+                    <label for="destination">Where to?</label>
+                    <input type="text" id="destination" placeholder="e.g. Goa, Manali, Jaipur" required>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="startDate">Start date</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="field">
+                        <label for="endDate">End date</label>
+                        <input type="date" id="endDate" required>
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="travelers">Travelers</label>
+                        <select id="travelers">
+                            <option value="1">Just me</option>
+                            <option value="2" selected>2 people</option>
+                            <option value="3">3 people</option>
+                            <option value="4">4 people</option>
+                            <option value="5">5 or more</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="budget">Budget (₹)</label>
+                        <input type="number" id="budget" min="0" step="500" placeholder="25000">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Travel style</label>
+                    <div class="style-chips" id="styleChips">
+                        <button type="button" class="style-chip">Relaxed</button>
+                        <button type="button" class="style-chip">Adventure</button>
+                        <button type="button" class="style-chip">Culture</button>
+                        <button type="button" class="style-chip">Food</button>
+                        <button type="button" class="style-chip">Nightlife</button>
+                        <button type="button" class="style-chip">Nature</button>
+                    </div>
+                </div>
+
+                <p class="form-message" id="formMessage" role="status"></p>
+
+                <div class="form-actions">
+                    <a href="dashboard.html" class="btn-ghost">Cancel</a>
+                    <button type="submit" class="btn-primary">Save trip</button>
+                </div>
+
+            </form>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/create-trip.js"></script>
+</body>
+</html>

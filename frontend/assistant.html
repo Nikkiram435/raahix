@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content chat-page">
+
+        <!-- TOP BAR -->
+        <header class="topbar chat-topbar">
+            <button class="chat-title">New chat ▾</button>
+
+            <div class="trip-chips">
+                <button class="chip">Where</button>
+                <button class="chip">When</button>
+                <button class="chip">Who</button>
+                <button class="chip">Budget</button>
+            </div>
+
+            <a href="create-trip.html" class="create-trip-btn">Create a trip</a>
+        </header>
+
+        <!-- CHAT AREA -->
+        <section class="chat-stage" id="chatStage">
+
+            <div class="chat-hero" id="chatHero">
+                <div class="welcome-icon" data-icon="sparkles"></div>
+                <h1>Where to today?</h1>
+                <p>Hey there, I'm here to help you plan your trip. Ask me anything travel related.</p>
+                <a href="profile.html" class="setup-pill">Set up my assistant</a>
+            </div>
+
+            <div class="messages" id="messages"></div>
+
+        </section>
+
+        <!-- CHAT INPUT -->
+        <div class="chat-area">
+            <div class="chat-box">
+                <button class="chat-add" aria-label="Add" data-icon="plus"></button>
+                <input type="text" id="chatInput" placeholder="Ask RAAHIX..." autocomplete="off">
+                <button class="chat-mic" aria-label="Voice" data-icon="mic"></button>
+                <button class="chat-send" id="chatSend" aria-label="Send" data-icon="arrow-up"></button>
+            </div>
+            <p class="chat-note">RAAHIX can make mistakes. Check important info.</p>
+        </div>
+
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/icons.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area form-page">
+
+            <div class="page-head">
+                <div>
+                    <h1>Profile</h1>
+                    <p class="page-sub">Your account and the data saved in this browser.</p>
+                </div>
+            </div>
+
+            <!-- Login nahi hai -->
+            <div class="empty-state" id="guestView" hidden>
+                <div class="empty-art">👤</div>
+                <h3>You're not logged in</h3>
+                <p>Log in or create an account to set up your profile.</p>
+                <div class="guest-actions">
+                    <a href="login.html" class="setup-btn">Log in</a>
+                    <a href="register.html" class="btn-ghost-outline">Create account</a>
+                </div>
+            </div>
+
+            <!-- Login hai -->
+            <div id="userView" hidden>
+
+                <div class="profile-card">
+                    <div class="profile-big-avatar" id="pAvatar"></div>
+                    <div>
+                        <h2 id="pName"></h2>
+                        <p class="page-sub" id="pEmail"></p>
+                    </div>
+                </div>
+
+                <div class="stat-grid three">
+                    <div class="stat"><small>Trips</small><strong id="pTrips">0</strong></div>
+                    <div class="stat"><small>Saved places</small><strong id="pSaved">0</strong></div>
+                    <div class="stat"><small>Activities planned</small><strong id="pActs">0</strong></div>
+                </div>
+
+                <div class="panel-card profile-section">
+                    <h2>Display name</h2>
+                    <form class="name-form" id="nameForm" novalidate>
+                        <input type="text" id="nameInput" maxlength="40" aria-label="Display name" placeholder="Your name">
+                        <button type="submit" class="btn-primary">Save name</button>
+                    </form>
+                    <p class="form-message" id="nameMsg" role="status"></p>
+                </div>
+
+                <div class="panel-card profile-section">
+                    <h2>Account</h2>
+                    <div class="account-actions">
+                        <button type="button" class="btn-ghost-outline" id="logoutBtn">Log out</button>
+                        <button type="button" class="danger-btn" id="wipeBtn">Delete all my data</button>
+                    </div>
+                    <p class="auth-demo left">Logging out keeps your trips and saved places on this browser. "Delete all my data" removes them permanently.</p>
+                </div>
+
+            </div>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area">
+
+            <div class="page-head">
+                <div>
+                    <h1>Budget</h1>
+                    <p class="page-sub">Track what you spend on each trip.</p>
+                </div>
+                <select class="filter-select" id="tripPicker" aria-label="Choose a trip"></select>
+            </div>
+
+            <!-- Jab koi trip nahi hai -->
+            <div class="empty-state" id="budgetEmpty" hidden>
+                <div class="empty-art">₹</div>
+                <h3>No trips to track yet</h3>
+                <p>Create a trip first, then add your expenses here.</p>
+                <a href="create-trip.html" class="setup-btn">Create a trip</a>
+            </div>
+
+            <div id="budgetView" hidden>
+
+                <div class="stat-grid three">
+                    <div class="stat"><small>Budget</small><strong id="bBudget">-</strong></div>
+                    <div class="stat"><small>Spent</small><strong id="bSpent">-</strong></div>
+                    <div class="stat"><small>Remaining</small><strong id="bRemaining">-</strong></div>
+                </div>
+
+                <div class="progress"><div class="progress-bar" id="bBar"></div></div>
+                <p class="progress-note" id="bNote"></p>
+
+                <div class="budget-grid">
+
+                    <div class="panel-card">
+                        <h2>By category</h2>
+                        <div class="chart-wrap">
+                            <canvas id="budgetChart" aria-label="Spending by category"></canvas>
+                        </div>
+                        <p class="list-note" id="chartEmpty">No expenses yet. Add your first one.</p>
+                    </div>
+
+                    <div class="panel-card">
+                        <h2>Add expense</h2>
+                        <form class="expense-form" id="expenseForm" novalidate>
+                            <select id="expCategory" aria-label="Category"></select>
+                            <input type="number" id="expAmount" min="1" step="1" placeholder="Amount (₹)" aria-label="Amount in rupees">
+                            <input type="text" id="expNote" maxlength="60" placeholder="Note (optional)" aria-label="Note">
+                            <button type="submit" class="btn-primary">Add expense</button>
+                        </form>
+                        <p class="form-message error" id="expMsg" role="status"></p>
+                        <ul class="expense-list" id="expenseList"></ul>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/budget.js"></script>
+</body>
+</html>

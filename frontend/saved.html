@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area">
+
+            <div class="page-head">
+                <div>
+                    <h1>Your saved</h1>
+                    <p class="page-sub">Places you've hearted while exploring.</p>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="savedPlaces">Places <span class="tab-count" id="placesCount">0</span></button>
+                <button class="tab" data-tab="savedCollections">Collections</button>
+                <button class="tab" data-tab="savedGuides">Guides</button>
+            </div>
+
+            <!-- PLACES -->
+            <div class="tab-panel active" id="savedPlaces">
+                <div class="place-grid" id="savedGrid"></div>
+
+                <div class="empty-state" id="savedEmpty" hidden>
+                    <div class="empty-art">♡</div>
+                    <h3>No saved places yet</h3>
+                    <p>Tap the heart on any place in Explore and it will show up here.</p>
+                    <a href="explore.html" class="setup-btn">Go to Explore</a>
+                </div>
+            </div>
+
+            <!-- COLLECTIONS -->
+            <div class="tab-panel" id="savedCollections">
+                <div class="empty-state">
+                    <div class="empty-art">🗂</div>
+                    <h3>Collections are coming soon</h3>
+                    <p>You'll be able to group saved places into themed collections.</p>
+                </div>
+            </div>
+
+            <!-- GUIDES -->
+            <div class="tab-panel" id="savedGuides">
+                <div class="empty-state">
+                    <div class="empty-art">📖</div>
+                    <h3>Guides are coming soon</h3>
+                    <p>Travel guides you save will appear here.</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/places-data.js"></script>
+    <script src="js/saved.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area">
+
+            <div class="page-head">
+                <div>
+                    <h1>Explore</h1>
+                    <p class="page-sub">Sample places to get you started.</p>
+                </div>
+            </div>
+
+            <div class="explore-bar">
+                <select class="filter-select" id="citySelect" aria-label="Choose a city"></select>
+                <input type="search" id="searchInput" class="search-input" placeholder="Search places, food, beaches..." aria-label="Search places">
+            </div>
+
+            <div class="tabs" id="categoryTabs">
+                <button class="tab active" data-cat="All">For you</button>
+                <button class="tab" data-cat="Experiences">Experiences</button>
+                <button class="tab" data-cat="Restaurants">Restaurants</button>
+                <button class="tab" data-cat="Stays">Stays</button>
+                <button class="tab" data-cat="Locations">Locations</button>
+            </div>
+
+            <p class="result-count" id="resultCount" role="status"></p>
+            <div class="place-grid" id="placeGrid"></div>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/places-data.js"></script>
+    <script src="js/explore.js"></script>
+</body>
+</html>

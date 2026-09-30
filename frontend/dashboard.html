@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Trips — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area">
+
+            <div class="page-head">
+                <h1>Your trips</h1>
+                <a href="create-trip.html" class="create-trip-btn">+ New trip</a>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-tab="trips">Trips</button>
+                <button class="tab" data-tab="calendar">Calendar</button>
+                <button class="tab" data-tab="receipts">Receipts</button>
+            </div>
+
+                        <!-- TRIPS -->
+            <div class="tab-panel active" id="trips">
+                <div class="filter-row">
+                    <label class="toggle">
+                        <input type="checkbox">
+                        <span class="toggle-track"></span>
+                        Booked only
+                    </label>
+                    <select class="filter-select" id="tripFilter">
+                        <option value="all">All</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="past">Past</option>
+                    </select>
+                </div>
+
+                <div class="trip-list" id="tripList"></div>
+
+                <div class="empty-state" id="tripsEmpty">
+                    <div class="empty-art">🧳</div>
+                    <h3>No trips yet? No problem.</h3>
+                    <p>Create one now and access your plans from here anytime.</p>
+                    <a href="create-trip.html" class="setup-btn">Create a trip</a>
+                </div>
+            </div>
+
+            <!-- CALENDAR -->
+            <div class="tab-panel" id="calendar">
+                <div class="empty-state">
+                    <div class="empty-art">📅</div>
+                    <h3>Nothing scheduled</h3>
+                    <p>Your trip dates will show up here once you plan a trip.</p>
+                    <a href="create-trip.html" class="setup-btn">Plan a trip</a>
+                </div>
+            </div>
+
+            <!-- RECEIPTS -->
+            <div class="tab-panel" id="receipts">
+                <div class="empty-state">
+                    <div class="empty-art">🧾</div>
+                    <h3>No receipts yet</h3>
+                    <p>Upload a booking receipt and RAAHIX will add it to your trip.</p>
+                    <a href="assistant.html" class="setup-btn">Ask RAAHIX</a>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itinerary — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area">
+
+            <div class="page-head">
+                <div>
+                    <h1>Itinerary</h1>
+                    <p class="page-sub">Your day-by-day plan, all in one place.</p>
+                </div>
+                <select class="filter-select" id="tripPicker" aria-label="Choose a trip"></select>
+            </div>
+
+            <!-- Jab koi trip nahi hai -->
+            <div class="empty-state" id="itinEmpty" hidden>
+                <div class="empty-art">🗺</div>
+                <h3>No itinerary yet</h3>
+                <p>Create a trip first, then add places and activities for each day.</p>
+                <a href="create-trip.html" class="setup-btn">Create a trip</a>
+            </div>
+
+            <div id="itinView" hidden>
+
+                <div class="itin-head">
+                    <div>
+                        <h2 id="itinTitle"></h2>
+                        <p class="page-sub" id="itinMeta"></p>
+                    </div>
+                    <div class="itin-actions">
+                        <button type="button" class="btn-ghost-outline" id="copyBtn">Copy itinerary</button>
+                        <a href="#" class="create-trip-btn" id="editLink">Edit plan</a>
+                    </div>
+                </div>
+
+                <p class="form-message" id="copyMsg" role="status"></p>
+
+                <div class="timeline" id="timeline"></div>
+
+            </div>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/itinerary.js"></script>
+</body>
+</html>

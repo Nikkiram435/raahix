@@ -1,6 +1,6 @@
-// Budget: trip ke kharche jodta hai aur chart banata hai.
-// Kharche trip ke andar (trip.expenses) browser mein save hote hain.
-// Phase 6 mein yahi data backend se aayega.
+// Budget: trip ke kharche jodta hai aur chart banata hai. Kharche backend (database) mein save hote hain.
+
+requireLogin();
 
 const CATEGORIES = [
     { name: "Stay", color: "#8b5cf6" },
@@ -17,7 +17,11 @@ const catSelect = $("expCategory");
 const amountInput = $("expAmount");
 const noteInput = $("expNote");
 const msg = $("expMsg");
+const addBtn = $("expenseForm").querySelector("button[type='submit']");
+
+let trips = [];
 let chart = null;
+let busy = false;
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -26,34 +30,24 @@ function el(tag, className, text) {
     return node;
 }
 
-function loadTrips() {
-    try {
-        return JSON.parse(localStorage.getItem("raahix_trips") || "[]");
-    } catch (err) {
-        return [];
-    }
-}
-
-function saveTrips(trips) {
-    try {
-        localStorage.setItem("raahix_trips", JSON.stringify(trips));
-        return true;
-    } catch (err) {
-        return false;
-    }
-}
-
 function money(n) {
     return "₹" + Math.round(n).toLocaleString("en-IN");
 }
 
 function currentTrip() {
-    return loadTrips().find((t) => t.id === Number(picker.value));
+    return trips.find((t) => t.id === Number(picker.value));
 }
 
 function colorOf(name) {
     const c = CATEGORIES.find((x) => x.name === name);
     return c ? c.color : "#94a3b8";
+}
+
+// Naye kharche backend ko bhejo, jawab mein aayi trip se list update karo
+async function saveExpenses(trip, expenses) {
+    const updated = await Trips.update(trip.id, { expenses: expenses });
+    trips = trips.map((t) => (t.id === updated.id ? updated : t));
+    render();
 }
 
 function renderChart(expenses) {
@@ -79,10 +73,9 @@ function renderChart(expenses) {
     wrap.hidden = false;
     note.hidden = true;
 
-    const totals = CATEGORIES.map((c) =>
-        expenses.filter((e) => e.category === c.name).reduce((sum, e) => sum + e.amount, 0)
-    );
-    const used = CATEGORIES.map((c, i) => ({ c, total: totals[i] })).filter((x) => x.total > 0);
+    const used = CATEGORIES
+        .map((c) => ({ c, total: expenses.filter((e) => e.category === c.name).reduce((s, e) => s + e.amount, 0) }))
+        .filter((x) => x.total > 0);
 
     chart = new Chart(canvas, {
         type: "doughnut",
@@ -121,10 +114,16 @@ function renderList(trip, expenses) {
 
         const remove = el("button", "exp-remove", "Remove");
         remove.type = "button";
-        remove.addEventListener("click", () => {
-            trip.expenses = expenses.filter((e) => e.id !== exp.id);
-            saveTrips(loadTrips().map((t) => (t.id === trip.id ? trip : t)));
-            render();
+        remove.addEventListener("click", async () => {
+            if (busy) return;
+            busy = true;
+            try {
+                await saveExpenses(trip, expenses.filter((e) => e.id !== exp.id));
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                busy = false;
+            }
         });
 
         li.append(dot, text, el("span", "exp-amount", money(exp.amount)), remove);
@@ -165,9 +164,10 @@ function render() {
     renderList(trip, expenses);
 }
 
-$("expenseForm").addEventListener("submit", (e) => {
+$("expenseForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     msg.textContent = "";
+    if (busy) return;
 
     const trip = currentTrip();
     if (!trip) return;
@@ -182,22 +182,26 @@ $("expenseForm").addEventListener("submit", (e) => {
         return;
     }
 
-    trip.expenses = (trip.expenses || []).concat({
+    const expenses = (trip.expenses || []).concat({
         id: Date.now(),
         category: catSelect.value,
         amount: amount,
         note: noteInput.value.trim().slice(0, 60),
     });
 
-    if (!saveTrips(loadTrips().map((t) => (t.id === trip.id ? trip : t)))) {
-        msg.textContent = "Couldn't save this expense in your browser.";
-        return;
+    busy = true;
+    addBtn.disabled = true;
+    try {
+        await saveExpenses(trip, expenses);
+        amountInput.value = "";
+        noteInput.value = "";
+        amountInput.focus();
+    } catch (err) {
+        msg.textContent = err.message;
+    } finally {
+        busy = false;
+        addBtn.disabled = false;
     }
-
-    amountInput.value = "";
-    noteInput.value = "";
-    amountInput.focus();
-    render();
 });
 
 picker.addEventListener("change", () => {
@@ -205,14 +209,20 @@ picker.addEventListener("change", () => {
     render();
 });
 
-function init() {
+async function init() {
     CATEGORIES.forEach((c) => {
         const opt = el("option", "", c.name);
         opt.value = c.name;
         catSelect.append(opt);
     });
 
-    const trips = loadTrips().sort((a, b) => a.startDate.localeCompare(b.startDate));
+    try {
+        trips = (await Trips.list()).sort((a, b) => a.startDate.localeCompare(b.startDate));
+    } catch (err) {
+        picker.hidden = true;
+        document.querySelector(".content-area").append(el("p", "list-note", err.message));
+        return;
+    }
 
     if (trips.length === 0) {
         $("budgetEmpty").hidden = false;

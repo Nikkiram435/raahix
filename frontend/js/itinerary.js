@@ -1,12 +1,15 @@
 // Itinerary: trip ka din-ba-din plan timeline mein dikhata hai (sirf padhne ke liye).
 // Plan badalne ke liye trip-details.html use hota hai.
-// Phase 6 mein yahi data backend se aayega.
+
+requireLogin();
 
 const MAX_DAYS = 30;
 
 const $ = (id) => document.getElementById(id);
 const picker = $("tripPicker");
 const copyMsg = $("copyMsg");
+
+let trips = [];
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -15,16 +18,8 @@ function el(tag, className, text) {
     return node;
 }
 
-function loadTrips() {
-    try {
-        return JSON.parse(localStorage.getItem("raahix_trips") || "[]");
-    } catch (err) {
-        return [];
-    }
-}
-
 function currentTrip() {
-    return loadTrips().find((t) => t.id === Number(picker.value));
+    return trips.find((t) => t.id === Number(picker.value));
 }
 
 function dayCount(start, end) {
@@ -139,8 +134,14 @@ picker.addEventListener("change", () => {
     render();
 });
 
-function init() {
-    const trips = loadTrips().sort((a, b) => a.startDate.localeCompare(b.startDate));
+async function init() {
+    try {
+        trips = (await Trips.list()).sort((a, b) => a.startDate.localeCompare(b.startDate));
+    } catch (err) {
+        picker.hidden = true;
+        document.querySelector(".content-area").append(el("p", "list-note", err.message));
+        return;
+    }
 
     if (trips.length === 0) {
         $("itinEmpty").hidden = false;

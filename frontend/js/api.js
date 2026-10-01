@@ -23,9 +23,19 @@ function clearSession() {
     } catch (err) {}
 }
 
+// Login ke bina kholne wale pages: login par bhej do
+function requireLogin() {
+    if (!getToken()) window.location.href = "login.html";
+}
+
 function readError(status, data) {
-    if (status === 422) return "Please check your details and try again.";
     if (data && typeof data.detail === "string") return data.detail;
+    if (status === 422) {
+        // Backend ka pehla message dikhao (jaise "End date can't be before the start date.")
+        const first = data && Array.isArray(data.detail) ? data.detail[0] : null;
+        if (first && typeof first.msg === "string") return first.msg.replace(/^Value error, /, "");
+        return "Please check your details and try again.";
+    }
     return "Something went wrong. Please try again.";
 }
 
@@ -48,9 +58,75 @@ async function apiRequest(path, { method = "GET", body, auth = false } = {}) {
         throw new Error("Can't reach the server. Is the backend running?");
     }
 
+    // Token purana ya galat ho toh dobara login karwao
+    if (res.status === 401 && auth) {
+        clearSession();
+        window.location.href = "login.html";
+        throw new Error("Please log in again.");
+    }
+
     let data = null;
     try { data = await res.json(); } catch (err) {}
 
     if (!res.ok) throw new Error(readError(res.status, data));
     return data;
 }
+
+// ---------- Trips ----------
+// Backend snake_case use karta hai (start_date), frontend camelCase (startDate).
+// Yeh dono ke beech ka anuvaad yahin hota hai.
+
+function tripFromApi(t) {
+    return {
+        id: t.id,
+        destination: t.destination,
+        startDate: t.start_date,
+        endDate: t.end_date,
+        travelers: t.travelers,
+        budget: t.budget,
+        styles: t.styles || [],
+        plan: t.plan || {},
+        expenses: t.expenses || [],
+    };
+}
+
+const Trips = {
+    async list() {
+        const data = await apiRequest("/api/trips", { auth: true });
+        return data.map(tripFromApi);
+    },
+
+    async get(id) {
+        return tripFromApi(await apiRequest("/api/trips/" + encodeURIComponent(id), { auth: true }));
+    },
+
+    async create(trip) {
+        const data = await apiRequest("/api/trips", {
+            method: "POST",
+            auth: true,
+            body: {
+                destination: trip.destination,
+                start_date: trip.startDate,
+                end_date: trip.endDate,
+                travelers: trip.travelers,
+                budget: trip.budget,
+                styles: trip.styles,
+            },
+        });
+        return tripFromApi(data);
+    },
+
+    // changes mein sirf wahi daalo jo badalna hai, jaise { plan: {...} } ya { expenses: [...] }
+    async update(id, changes) {
+        const data = await apiRequest("/api/trips/" + encodeURIComponent(id), {
+            method: "PATCH",
+            auth: true,
+            body: changes,
+        });
+        return tripFromApi(data);
+    },
+
+    async remove(id) {
+        await apiRequest("/api/trips/" + encodeURIComponent(id), { method: "DELETE", auth: true });
+    },
+};

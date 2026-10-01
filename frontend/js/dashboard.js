@@ -1,31 +1,18 @@
-// My Trips: browser mein save hui trips dikhata hai.
-// Phase 6 mein yahi data backend se fetch() hoga.
+// My Trips: backend (database) se trips laata hai aur cards dikhata hai.
+
+requireLogin();
 
 const list = document.getElementById("tripList");
 const emptyState = document.getElementById("tripsEmpty");
 const filterSelect = document.getElementById("tripFilter");
+
+let trips = [];
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
-}
-
-function loadTrips() {
-    try {
-        return JSON.parse(localStorage.getItem("raahix_trips") || "[]");
-    } catch (err) {
-        return [];
-    }
-}
-
-function saveTrips(trips) {
-    try {
-        localStorage.setItem("raahix_trips", JSON.stringify(trips));
-    } catch (err) {
-        alert("Couldn't update your trips in this browser.");
-    }
 }
 
 function localToday() {
@@ -78,10 +65,17 @@ function buildCard(trip) {
 
     const del = el("button", "trip-delete", "Delete trip");
     del.type = "button";
-    del.addEventListener("click", () => {
+    del.addEventListener("click", async () => {
         if (!confirm("Delete your trip to " + trip.destination + "?")) return;
-        saveTrips(loadTrips().filter((t) => t.id !== trip.id));
-        render();
+        del.disabled = true;
+        try {
+            await Trips.remove(trip.id);
+            trips = trips.filter((t) => t.id !== trip.id);
+            render();
+        } catch (err) {
+            del.disabled = false;
+            alert(err.message);
+        }
     });
     body.append(del);
 
@@ -90,28 +84,43 @@ function buildCard(trip) {
 }
 
 function render() {
-    const all = loadTrips();
     const mode = filterSelect.value;
     const today = localToday();
 
-    const shown = all.filter((t) => {
+    const shown = trips.filter((t) => {
         if (mode === "upcoming") return t.endDate >= today;
         if (mode === "past") return t.endDate < today;
         return true;
     });
 
     list.innerHTML = "";
-    emptyState.style.display = all.length === 0 ? "block" : "none";
+    emptyState.style.display = trips.length === 0 ? "block" : "none";
 
-    if (all.length > 0 && shown.length === 0) {
+    if (trips.length > 0 && shown.length === 0) {
         list.append(el("p", "list-note", "No " + mode + " trips."));
         return;
     }
 
     shown
+        .slice()
         .sort((a, b) => a.startDate.localeCompare(b.startDate))
         .forEach((t) => list.append(buildCard(t)));
 }
 
+async function init() {
+    emptyState.style.display = "none";
+    list.innerHTML = "";
+    list.append(el("p", "list-note", "Loading your trips..."));
+
+    try {
+        trips = await Trips.list();
+    } catch (err) {
+        list.innerHTML = "";
+        list.append(el("p", "list-note", err.message));
+        return;
+    }
+    render();
+}
+
 filterSelect.addEventListener("change", render);
-render();
+init();

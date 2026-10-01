@@ -1,10 +1,9 @@
-// Profile: naam, email aur counters dikhata hai. Log out aur data delete bhi yahin hota hai.
-// Phase 5 mein yeh data backend (real account) se aayega.
+// Profile: naam, email aur counters dikhata hai. Log out aur trips/saved delete bhi yahin hota hai.
 
 (function () {
     const $ = (id) => document.getElementById(id);
 
-    const DATA_KEYS = [
+    const LOCAL_KEYS = [
         "raahix_trips", "raahix_saved", "raahix_user", "raahix_token",
         "raahix_budget_trip", "raahix_itin_trip",
     ];
@@ -31,10 +30,11 @@
         box.className = "form-message " + type;
     }
 
-    function render() {
+    async function render() {
         const user = read("raahix_user", null);
 
-        if (!user) {
+        // Login nahi hai (ya token nahi hai): guest view
+        if (!user || !getToken()) {
             $("guestView").hidden = false;
             $("userView").hidden = true;
             return;
@@ -48,13 +48,19 @@
         $("pName").textContent = name;
         $("pEmail").textContent = user.email || "";
         $("nameInput").value = name;
-
-        const trips = read("raahix_trips", []);
-        $("pTrips").textContent = String(trips.length);
         $("pSaved").textContent = String(read("raahix_saved", []).length);
-        $("pActs").textContent = String(countActivities(trips));
+
+        try {
+            const trips = await Trips.list();
+            $("pTrips").textContent = String(trips.length);
+            $("pActs").textContent = String(countActivities(trips));
+        } catch (err) {
+            $("pTrips").textContent = "-";
+            $("pActs").textContent = "-";
+        }
     }
 
+    // Naam abhi sirf is browser mein badalta hai (backend mein naam badalne ka endpoint baad mein aayega)
     $("nameForm").addEventListener("submit", (e) => {
         e.preventDefault();
         const user = read("raahix_user", null);
@@ -71,28 +77,35 @@
         }
 
         render();
-        setMessage("Name saved. The sidebar will update when you open the next page.", "success");
+        setMessage("Name saved on this browser. The sidebar will update when you open the next page.", "success");
     });
 
     $("logoutBtn").addEventListener("click", () => {
-    try {
-        localStorage.removeItem("raahix_user");
-        localStorage.removeItem("raahix_token");
-    } catch (err) {}
-    window.location.href = "login.html";
+        clearSession();
+        window.location.href = "login.html";
     });
 
-    $("wipeBtn").addEventListener("click", () => {
+    $("wipeBtn").addEventListener("click", async () => {
         const ok = confirm(
-            "Delete your trips, saved places and account details from this browser? This can't be undone."
+            "Delete all your trips and saved places, and log out? This can't be undone. Your account itself stays."
         );
         if (!ok) return;
+
+        const btn = $("wipeBtn");
+        btn.disabled = true;
+
         try {
-            DATA_KEYS.forEach((key) => localStorage.removeItem(key));
+            const trips = await Trips.list();
+            for (const t of trips) await Trips.remove(t.id);
         } catch (err) {
-            alert("Couldn't delete your data. Please try again.");
+            btn.disabled = false;
+            alert(err.message);
             return;
         }
+
+        try {
+            LOCAL_KEYS.forEach((key) => localStorage.removeItem(key));
+        } catch (err) {}
         window.location.href = "index.html";
     });
 

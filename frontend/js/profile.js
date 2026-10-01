@@ -5,7 +5,7 @@
     const $ = (id) => document.getElementById(id);
 
     const DATA_KEYS = [
-        "raahix_trips", "raahix_saved", "raahix_user",
+        "raahix_trips", "raahix_saved", "raahix_user", "raahix_token",
         "raahix_budget_trip", "raahix_itin_trip",
     ];
 
@@ -75,8 +75,11 @@
     });
 
     $("logoutBtn").addEventListener("click", () => {
-        try { localStorage.removeItem("raahix_user"); } catch (err) {}
-        window.location.href = "login.html";
+    try {
+        localStorage.removeItem("raahix_user");
+        localStorage.removeItem("raahix_token");
+    } catch (err) {}
+    window.location.href = "login.html";
     });
 
     $("wipeBtn").addEventListener("click", () => {

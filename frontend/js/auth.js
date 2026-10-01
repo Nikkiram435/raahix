@@ -1,6 +1,5 @@
-// Login / Register (DEMO MODE): abhi backend nahi hai.
-// Sirf form check karta hai aur naam + email browser mein save karta hai.
-// Password kabhi save nahi hota. Phase 5 mein yahi FastAPI (JWT + bcrypt) se jaayega.
+// Login / Register: ab asli backend (FastAPI) se jude hain.
+// Password sirf backend ko jaata hai, browser mein kahin save nahi hota.
 
 (function () {
     const form = document.getElementById("authForm");
@@ -8,43 +7,30 @@
     if (!form) return;
 
     const mode = form.dataset.mode;
+    const button = form.querySelector("button[type='submit']");
     const EMAIL_OK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     function fail(input, text) {
         form.querySelectorAll("input").forEach((i) => i.classList.remove("invalid"));
-        if (input) input.classList.add("invalid");
-        if (input) input.focus();
+        if (input) {
+            input.classList.add("invalid");
+            input.focus();
+        }
         msg.textContent = text;
         msg.className = "form-message error";
     }
 
-    function saveUser(user) {
-        try {
-            localStorage.setItem("raahix_user", JSON.stringify(user));
-            return true;
-        } catch (err) {
-            return false;
-        }
-    }
-
-    function nameFromEmail(email) {
-        const part = email.split("@")[0].replace(/[._-]+/g, " ").trim();
-        return part ? part.charAt(0).toUpperCase() + part.slice(1) : "Traveler";
-    }
-
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         msg.textContent = "";
 
         const email = document.getElementById("email");
         const password = document.getElementById("password");
+        const emailValue = email.value.trim();
 
-        if (!EMAIL_OK.test(email.value.trim())) {
-            return fail(email, "Please enter a valid email address.");
-        }
+        if (!EMAIL_OK.test(emailValue)) return fail(email, "Please enter a valid email address.");
 
-        let name;
-
+        let body;
         if (mode === "register") {
             const nameInput = document.getElementById("name");
             const confirm = document.getElementById("confirm");
@@ -53,21 +39,29 @@
             if (password.value.length < 8) return fail(password, "Password must be at least 8 characters.");
             if (password.value !== confirm.value) return fail(confirm, "The two passwords don't match.");
 
-            name = nameInput.value.trim();
+            body = { name: nameInput.value.trim(), email: emailValue, password: password.value };
         } else {
             if (!password.value) return fail(password, "Please enter your password.");
-
-            // Pehle se saved naam mil jaaye toh wahi use karo
-            let old = null;
-            try { old = JSON.parse(localStorage.getItem("raahix_user") || "null"); } catch (err) {}
-            name = old && old.email === email.value.trim().toLowerCase()
-                ? old.name
-                : nameFromEmail(email.value.trim());
+            body = { email: emailValue, password: password.value };
         }
 
-        const ok = saveUser({ name: name, email: email.value.trim().toLowerCase() });
-        if (!ok) return fail(null, "Couldn't save your details in this browser. Please try again.");
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = "Please wait...";
 
-        window.location.href = "index.html";
+        try {
+            const path = mode === "register" ? "/api/auth/register" : "/api/auth/login";
+            const data = await apiRequest(path, { method: "POST", body: body });
+
+            if (!setSession(data.access_token, data.user)) {
+                return fail(null, "Couldn't save your login in this browser. Please try again.");
+            }
+            window.location.href = "index.html";
+        } catch (err) {
+            fail(null, err.message);
+        } finally {
+            button.disabled = false;
+            button.textContent = originalText;
+        }
     });
 })();

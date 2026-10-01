@@ -1,5 +1,6 @@
 // Sample places (nakli data). Phase 8 mein yeh real API se aayega.
 // Explore aur Saved dono pages isi file ko use karte hain.
+// Saved places ab backend (database) mein rehte hain, js/api.js ka Saved helper dekho.
 
 const PLACES = [
     // Mumbai
@@ -32,24 +33,3 @@ const PLACES = [
     { id: 19, name: "Munnar tea gardens",        city: "Kerala", category: "Locations",   emoji: "🍃", tags: "Hills, Tea estates, Cool weather" },
     { id: 20, name: "Kerala sadya meal",         city: "Kerala", category: "Restaurants", emoji: "🍌", tags: "Banana-leaf feast, Vegetarian" },
 ];
-
-// Saved places: browser (localStorage) mein id ki list
-function loadSaved() {
-    try {
-        return JSON.parse(localStorage.getItem("raahix_saved") || "[]");
-    } catch (err) {
-        return [];
-    }
-}
-
-function toggleSaved(id) {
-    const saved = loadSaved();
-    const next = saved.includes(id) ? saved.filter((x) => x !== id) : saved.concat(id);
-    try {
-        localStorage.setItem("raahix_saved", JSON.stringify(next));
-    } catch (err) {
-        alert("Couldn't save this place in your browser.");
-        return saved;
-    }
-    return next;
-}

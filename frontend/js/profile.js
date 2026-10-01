@@ -48,15 +48,16 @@
         $("pName").textContent = name;
         $("pEmail").textContent = user.email || "";
         $("nameInput").value = name;
-        $("pSaved").textContent = String(read("raahix_saved", []).length);
 
         try {
-            const trips = await Trips.list();
+            const [trips, saved] = await Promise.all([Trips.list(), Saved.list()]);
             $("pTrips").textContent = String(trips.length);
             $("pActs").textContent = String(countActivities(trips));
+            $("pSaved").textContent = String(saved.length);
         } catch (err) {
             $("pTrips").textContent = "-";
             $("pActs").textContent = "-";
+            $("pSaved").textContent = "-";
         }
     }
 
@@ -97,6 +98,8 @@
         try {
             const trips = await Trips.list();
             for (const t of trips) await Trips.remove(t.id);
+            const saved = await Saved.list();
+            for (const id of saved) await Saved.unsave(id);
         } catch (err) {
             btn.disabled = false;
             alert(err.message);

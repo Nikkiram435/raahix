@@ -1,5 +1,5 @@
 // Explore: city, search aur category se places filter karta hai.
-// Heart button se place save hota hai (browser mein).
+// Heart button se place backend (database) mein save hota hai.
 
 const grid = document.getElementById("placeGrid");
 const countEl = document.getElementById("resultCount");
@@ -8,12 +8,40 @@ const searchInput = document.getElementById("searchInput");
 const tabs = document.querySelectorAll("#categoryTabs .tab");
 
 let activeCategory = "All";
+let savedIds = [];
+let loadFailed = false;
+const pending = new Set();   // jin places ki request abhi chal rahi hai
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+}
+
+async function toggleSaved(id) {
+    if (!getToken()) {
+        window.location.href = "login.html";
+        return;
+    }
+    if (pending.has(id)) return;
+    pending.add(id);
+
+    const wasSaved = savedIds.includes(id);
+    savedIds = wasSaved ? savedIds.filter((x) => x !== id) : savedIds.concat(id);
+    render();   // heart turant badal do
+
+    try {
+        if (wasSaved) await Saved.unsave(id);
+        else await Saved.save(id);
+    } catch (err) {
+        // Backend ne mana kiya: heart wapas purani halat mein
+        savedIds = wasSaved ? savedIds.concat(id) : savedIds.filter((x) => x !== id);
+        render();
+        alert(err.message);
+    } finally {
+        pending.delete(id);
+    }
 }
 
 function buildCard(place, isSaved) {
@@ -26,10 +54,7 @@ function buildCard(place, isSaved) {
     heart.type = "button";
     heart.setAttribute("aria-pressed", String(isSaved));
     heart.setAttribute("aria-label", (isSaved ? "Remove " : "Save ") + place.name);
-    heart.addEventListener("click", () => {
-        toggleSaved(place.id);
-        render();
-    });
+    heart.addEventListener("click", () => toggleSaved(place.id));
     cover.append(heart);
 
     const body = el("div", "place-body");
@@ -46,7 +71,6 @@ function buildCard(place, isSaved) {
 function render() {
     const city = citySelect.value;
     const query = searchInput.value.trim().toLowerCase();
-    const saved = loadSaved();
 
     const shown = PLACES.filter((p) => {
         if (city !== "All" && p.city !== city) return false;
@@ -59,7 +83,8 @@ function render() {
     });
 
     grid.innerHTML = "";
-    countEl.textContent = shown.length + (shown.length === 1 ? " place" : " places");
+    countEl.textContent = shown.length + (shown.length === 1 ? " place" : " places") +
+        (loadFailed ? " (couldn't load your saved places)" : "");
 
     if (shown.length === 0) {
         const box = el("div", "empty-state");
@@ -73,7 +98,7 @@ function render() {
         return;
     }
 
-    shown.forEach((p) => grid.append(buildCard(p, saved.includes(p.id))));
+    shown.forEach((p) => grid.append(buildCard(p, savedIds.includes(p.id))));
 }
 
 // City dropdown places-data se banta hai
@@ -102,4 +127,16 @@ if (wantedCat && [...tabs].some((t) => t.dataset.cat === wantedCat)) {
     tabs.forEach((t) => t.classList.toggle("active", t.dataset.cat === wantedCat));
 }
 
-render();
+async function init() {
+    render();   // places turant dikhao, hearts baad mein bharenge
+    if (!getToken()) return;
+
+    try {
+        savedIds = await Saved.list();
+    } catch (err) {
+        loadFailed = true;
+    }
+    render();
+}
+
+init();

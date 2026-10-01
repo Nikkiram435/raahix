@@ -1,15 +1,33 @@
-// Saved: Explore mein heart kiye hue places dikhata hai.
-// places-data.js se PLACES aur loadSaved() / toggleSaved() aate hain.
+// Saved: backend (database) mein save kiye hue places dikhata hai.
+
+requireLogin();
 
 const grid = document.getElementById("savedGrid");
 const emptyState = document.getElementById("savedEmpty");
 const countEl = document.getElementById("placesCount");
+
+let savedIds = [];
+const pending = new Set();
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+}
+
+async function removePlace(id) {
+    if (pending.has(id)) return;
+    pending.add(id);
+    try {
+        await Saved.unsave(id);
+        savedIds = savedIds.filter((x) => x !== id);
+        render();
+    } catch (err) {
+        alert(err.message);
+    } finally {
+        pending.delete(id);
+    }
 }
 
 function buildCard(place) {
@@ -22,10 +40,7 @@ function buildCard(place) {
     heart.type = "button";
     heart.setAttribute("aria-pressed", "true");
     heart.setAttribute("aria-label", "Remove " + place.name + " from saved");
-    heart.addEventListener("click", () => {
-        toggleSaved(place.id);
-        render();
-    });
+    heart.addEventListener("click", () => removePlace(place.id));
     cover.append(heart);
 
     const body = el("div", "place-body");
@@ -40,7 +55,6 @@ function buildCard(place) {
 }
 
 function render() {
-    const savedIds = loadSaved();
     // Sirf wahi ids dikhao jo abhi PLACES mein maujood hain
     const places = PLACES.filter((p) => savedIds.includes(p.id));
 
@@ -51,4 +65,18 @@ function render() {
     places.forEach((p) => grid.append(buildCard(p)));
 }
 
-render();
+async function init() {
+    emptyState.hidden = true;
+    grid.append(el("p", "list-note", "Loading your saved places..."));
+
+    try {
+        savedIds = await Saved.list();
+    } catch (err) {
+        grid.innerHTML = "";
+        grid.append(el("p", "list-note", err.message));
+        return;
+    }
+    render();
+}
+
+init();

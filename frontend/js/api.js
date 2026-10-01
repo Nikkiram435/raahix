@@ -130,3 +130,19 @@ const Trips = {
         await apiRequest("/api/trips/" + encodeURIComponent(id), { method: "DELETE", auth: true });
     },
 };
+
+// ---------- Saved places ----------
+
+const Saved = {
+    async list() {
+        return apiRequest("/api/saved", { auth: true });   // [1, 7, ...] place ids
+    },
+
+    async save(placeId) {
+        await apiRequest("/api/saved/" + encodeURIComponent(placeId), { method: "PUT", auth: true });
+    },
+
+    async unsave(placeId) {
+        await apiRequest("/api/saved/" + encodeURIComponent(placeId), { method: "DELETE", auth: true });
+    },
+};

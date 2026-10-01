@@ -1,8 +1,8 @@
-# Database ki tables: User aur Trip.
+# Database ki tables: User, Trip aur SavedPlace.
 
 from datetime import date, datetime, timezone
 
-from sqlalchemy import JSON, Date, DateTime, ForeignKey, Integer, String
+from sqlalchemy import JSON, Date, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database import Base
@@ -33,6 +33,19 @@ class Trip(Base):
     styles: Mapped[list] = mapped_column(JSON, default=list)
     plan: Mapped[dict] = mapped_column(JSON, default=dict)        # {"0": ["Baga Beach"], "1": [...]}
     expenses: Mapped[list] = mapped_column(JSON, default=list)    # [{id, category, amount, note}]
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(timezone.utc)
+    )
+
+
+class SavedPlace(Base):
+    __tablename__ = "saved_places"
+    # Ek user ek place ko do baar save nahi kar sakta
+    __table_args__ = (UniqueConstraint("user_id", "place_id", name="uq_user_place"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    place_id: Mapped[int] = mapped_column(Integer)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc)
     )

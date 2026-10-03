@@ -5,6 +5,7 @@ import models  # noqa: F401  (isse tables register hoti hain)
 from auth_routes import router as auth_router
 from trips_routes import router as trips_router
 from saved_routes import router as saved_router
+from chat_routes import router as chat_router
 from database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -22,6 +23,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(trips_router)
 app.include_router(saved_router)
+app.include_router(chat_router)
 
 
 @app.get("/api/health")

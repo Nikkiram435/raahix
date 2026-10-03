@@ -882,3 +882,20 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 /* ============ CHAT MESSAGES (AI) ============ */
 .msg { white-space: pre-wrap; overflow-wrap: anywhere; }
 .msg.bot.error { color: #f87171; border-color: rgba(248, 113, 113, 0.4); }
+
+/* ============ WEATHER ============ */
+.weather-section { margin-bottom: 32px; }
+.weather-note { color: var(--muted); font-size: 0.85rem; margin: 4px 0 12px; }
+
+.weather-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+.weather-card {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 14px 8px; text-align: center;
+  border-radius: var(--r-md); background: var(--panel); border: 1px solid var(--line);
+}
+.weather-card small { color: var(--muted); font-size: 0.75rem; }
+.weather-card strong { font-size: 0.95rem; }
+.weather-icon { font-size: 1.8rem; line-height: 1.2; }
+.weather-rain { color: #38bdf8 !important; }
+
+.weather-row + .weather-note { margin-top: 12px; }

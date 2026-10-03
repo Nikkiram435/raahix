@@ -146,3 +146,11 @@ const Saved = {
         await apiRequest("/api/saved/" + encodeURIComponent(placeId), { method: "DELETE", auth: true });
     },
 };
+
+// ---------- Weather ----------
+
+const Weather = {
+    async forCity(city) {
+        return apiRequest("/api/weather?city=" + encodeURIComponent(city), { auth: true });
+    },
+};

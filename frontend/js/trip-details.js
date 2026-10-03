@@ -1,4 +1,5 @@
 // Trip details: backend se trip laata hai, din-ba-din plan dikhata aur badalta hai.
+// Neeche mausam (weather) bhi dikhta hai, jo /api/weather se aata hai.
 
 requireLogin();
 
@@ -6,6 +7,9 @@ const root = document.getElementById("tripDetail");
 const MAX_DAYS_SHOWN = 30;
 let trip = null;
 let busy = false;
+
+// Mausam ki halat: "loading", "ok" ya "error"
+let weather = { state: "loading", data: null, message: "" };
 
 function el(tag, className, text) {
     const node = document.createElement(tag);
@@ -29,6 +33,104 @@ function dayCount(start, end) {
     const ms = new Date(end + "T00:00:00") - new Date(start + "T00:00:00");
     return Math.round(ms / 86400000) + 1;
 }
+
+// ---------- Mausam ----------
+
+// Open-Meteo ke weather code ka matlab (WMO codes)
+function weatherInfo(code) {
+    if (code === 0) return { icon: "☀️", label: "Clear" };
+    if (code === 1) return { icon: "🌤️", label: "Mostly clear" };
+    if (code === 2) return { icon: "⛅", label: "Partly cloudy" };
+    if (code === 3) return { icon: "☁️", label: "Overcast" };
+    if (code === 45 || code === 48) return { icon: "🌫️", label: "Fog" };
+    if (code >= 51 && code <= 55) return { icon: "🌦️", label: "Drizzle" };
+    if (code === 56 || code === 57) return { icon: "🌧️", label: "Freezing drizzle" };
+    if (code >= 61 && code <= 65) return { icon: "🌧️", label: "Rain" };
+    if (code === 66 || code === 67) return { icon: "🌧️", label: "Freezing rain" };
+    if (code >= 71 && code <= 77) return { icon: "❄️", label: "Snow" };
+    if (code >= 80 && code <= 82) return { icon: "🌦️", label: "Rain showers" };
+    if (code === 85 || code === 86) return { icon: "🌨️", label: "Snow showers" };
+    if (code === 95) return { icon: "⛈️", label: "Thunderstorm" };
+    if (code === 96 || code === 99) return { icon: "⛈️", label: "Thunderstorm, hail" };
+    return { icon: "🌡️", label: "No data" };
+}
+
+function formatTemp(n) {
+    return n === null || n === undefined ? "-" : Math.round(n) + "°";
+}
+
+function buildWeatherCard(d) {
+    const info = weatherInfo(d.code);
+    const date = new Date(d.date + "T00:00:00");
+
+    const card = el("div", "weather-card");
+    const icon = el("span", "weather-icon", info.icon);
+    icon.setAttribute("aria-hidden", "true");
+
+    card.append(
+        el("small", "", fmt(date, { weekday: "short", day: "numeric", month: "short" })),
+        icon,
+        el("strong", "", formatTemp(d.temp_max) + " / " + formatTemp(d.temp_min)),
+        el("small", "", info.label),
+        el("small", "weather-rain", d.rain_chance === null || d.rain_chance === undefined ? "" : "Rain " + d.rain_chance + "%")
+    );
+    return card;
+}
+
+// weatherBox ke andar mausam ka section bharta hai (poora page dobara nahi banata)
+function fillWeather(box) {
+    if (!box || !trip) return;
+    box.innerHTML = "";
+
+    const head = el("div", "detail-head");
+    head.append(el("h2", "", "Weather"));
+    box.append(head);
+
+    if (weather.state === "loading") {
+        box.append(el("p", "weather-note", "Loading the forecast..."));
+        return;
+    }
+    if (weather.state === "error") {
+        box.append(el("p", "weather-note", weather.message));
+        return;
+    }
+
+    // Sirf wahi din jo trip ki dates mein aate hain
+    const days = weather.data.days.filter((d) => d.date >= trip.startDate && d.date <= trip.endDate);
+
+    if (days.length === 0) {
+        const over = trip.endDate < localToday();
+        box.append(el("p", "weather-note",
+            over
+                ? "This trip is over, so there's no forecast to show."
+                : "Forecasts only cover the next 16 days. Check back closer to your trip."));
+        return;
+    }
+
+    box.append(el("p", "weather-note", "Forecast for " + weather.data.place));
+
+    const row = el("div", "weather-row");
+    days.forEach((d) => row.append(buildWeatherCard(d)));
+    box.append(row);
+
+    const total = dayCount(trip.startDate, trip.endDate);
+    if (days.length < total) {
+        box.append(el("p", "weather-note", "Showing " + days.length + " of " + total +
+            " days. Only days within the 16-day forecast are available."));
+    }
+}
+
+async function loadWeather() {
+    try {
+        const data = await Weather.forCity(trip.destination);
+        weather = { state: "ok", data: data, message: "" };
+    } catch (err) {
+        weather = { state: "error", data: null, message: err.message };
+    }
+    fillWeather(document.getElementById("weatherBox"));
+}
+
+// ---------- Trip ----------
 
 function showNotFound() {
     root.innerHTML = "";
@@ -145,6 +247,11 @@ function render() {
         buildStat("Per person per day", perDay)
     );
 
+    // Mausam ka section (id isliye ki baad mein load hone par yahi bhara jaaye)
+    const weatherBox = el("div", "weather-section");
+    weatherBox.id = "weatherBox";
+    fillWeather(weatherBox);
+
     const head = el("div", "detail-head");
     head.append(el("h2", "", "Day by day"));
     const ask = el("a", "create-trip-btn", "Ask RAAHIX to plan");
@@ -155,7 +262,7 @@ function render() {
     const shown = Math.min(days, MAX_DAYS_SHOWN);
     for (let i = 0; i < shown; i++) dayList.append(buildDayCard(i));
 
-    root.append(hero, stats, head, dayList);
+    root.append(hero, stats, weatherBox, head, dayList);
 
     if (days > MAX_DAYS_SHOWN) {
         root.append(el("p", "list-note", "Showing the first " + MAX_DAYS_SHOWN + " days of " + days + "."));
@@ -177,6 +284,7 @@ async function load() {
         return;
     }
     render();
+    loadWeather();   // trip dikhne ke baad mausam alag se aata hai
 }
 
 load();

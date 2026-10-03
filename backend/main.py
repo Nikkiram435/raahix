@@ -6,6 +6,7 @@ from auth_routes import router as auth_router
 from trips_routes import router as trips_router
 from saved_routes import router as saved_router
 from chat_routes import router as chat_router
+from weather_routes import router as weather_router
 from database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -24,7 +25,7 @@ app.include_router(auth_router)
 app.include_router(trips_router)
 app.include_router(saved_router)
 app.include_router(chat_router)
-
+app.include_router(weather_router)
 
 @app.get("/api/health")
 def health():

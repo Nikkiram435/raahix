@@ -1,5 +1,7 @@
-// RAAHIX chat: abhi nakli (dummy) jawab deta hai.
-// Phase 7 mein yahi fake reply real AI se badal jaayega.
+// RAAHIX chat: sawaal backend (/api/chat) ko jaata hai, jawab Gemini se aata hai.
+// Baatcheet sirf is page par rehti hai (refresh par mit jaati hai).
+
+requireLogin();
 
 const input = document.getElementById("chatInput");
 const sendBtn = document.getElementById("chatSend");
@@ -7,41 +9,74 @@ const hero = document.getElementById("chatHero");
 const messages = document.getElementById("messages");
 const stage = document.getElementById("chatStage");
 
+const MAX_HISTORY = 19;   // backend 20 tak leta hai, aur list user se shuru aur user par khatam honi chahiye
+const MAX_CONTENT = 2000; // backend ek message mein itne hi akshar leta hai
+
+let history = [];
+let busy = false;
+
+input.maxLength = MAX_CONTENT;
+
 function addMessage(text, who) {
     const div = document.createElement("div");
     div.className = "msg " + who;
-    div.textContent = text;              // textContent: user ka text safe rehta hai
+    div.textContent = text;              // textContent: text safe rehta hai
     messages.appendChild(div);
     stage.scrollTop = stage.scrollHeight;
     return div;
 }
 
-// Abhi ka nakli jawab. Baad mein yahan backend ko fetch() call hogi.
-function getFakeReply(question) {
-    return "Great idea! I'm still learning, but soon I'll plan \"" +
-           question + "\" for you with places, weather and budget.";
+function setBusy(value) {
+    busy = value;
+    input.disabled = value;
+    sendBtn.disabled = value;
 }
 
-function sendMessage() {
+async function sendMessage() {
+    if (busy) return;
     const text = input.value.trim();
     if (!text) return;
 
     if (hero) hero.style.display = "none";   // "Where to today?" hata do
 
     addMessage(text, "user");
-    input.value = "";
-    input.focus();
+    history.push({ role: "user", content: text });
+    while (history.length > MAX_HISTORY) history.splice(0, 2);
 
-    const typing = addMessage("Thinking...", "bot");
-    setTimeout(() => {
-        typing.textContent = getFakeReply(text);
+    input.value = "";
+    setBusy(true);
+    const reply = addMessage("Thinking...", "bot");
+
+    try {
+        const data = await apiRequest("/api/chat", {
+            method: "POST",
+            auth: true,
+            body: {
+                messages: history.map((m) => ({
+                    role: m.role,
+                    content: m.content.slice(0, MAX_CONTENT),
+                })),
+            },
+        });
+        reply.textContent = data.reply;
+        history.push({ role: "assistant", content: data.reply });
+    } catch (err) {
+        reply.textContent = err.message;
+        reply.classList.add("error");
+        history.pop();   // fail hua sawaal history se hata do, taaki agli baar list sahi rahe
+    } finally {
+        setBusy(false);
+        input.focus();
         stage.scrollTop = stage.scrollHeight;
-    }, 900);
+    }
 }
 
 sendBtn.addEventListener("click", sendMessage);
 input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendMessage();
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
 });
 
 // Where / When / Who / Budget chips: click par input mein starter text aata hai
@@ -54,6 +89,7 @@ const starters = {
 
 document.querySelectorAll(".chip").forEach((chip) => {
     chip.addEventListener("click", () => {
+        if (busy) return;
         input.value = starters[chip.textContent.trim()] || "";
         input.focus();
     });

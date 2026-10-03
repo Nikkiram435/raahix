@@ -878,3 +878,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 /* ============ CATEGORY LINKS ============ */
 .category:disabled { opacity: 0.45; cursor: not-allowed; }
 .category:disabled:hover { background: var(--panel); }
+
+/* ============ CHAT MESSAGES (AI) ============ */
+.msg { white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.bot.error { color: #f87171; border-color: rgba(248, 113, 113, 0.4); }

@@ -21,11 +21,17 @@ log = logging.getLogger("raahix.chat")
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
-# Pehla model busy ho toh yeh try hota hai (khaali chhodo toh fallback band)
+# Pehla model busy ya slow ho toh yeh try hota hai (khaali chhodo toh fallback band)
 FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash")
 
+# Gemini kabhi-kabhi 30 second se zyada leta hai, isliye 60 second (milliseconds mein)
+TIMEOUT_MS = 60000
+
+# In errors par doosra model try hota hai: limit, Google ki dikkat, busy, deadline
+RETRY_CODES = (429, 500, 503, 504)
+
 client = (
-    genai.Client(api_key=API_KEY, http_options=types.HttpOptions(timeout=30000))
+    genai.Client(api_key=API_KEY, http_options=types.HttpOptions(timeout=TIMEOUT_MS))
     if API_KEY
     else None
 )
@@ -103,7 +109,7 @@ def chat(data: ChatIn, user: User = Depends(get_current_user)):
         max_output_tokens=MAX_TOKENS,
     )
 
-    # Pehle main model, busy ya limit lagne par fallback model
+    # Pehle main model, busy ya slow hone par fallback model
     models_to_try = [MODEL]
     if FALLBACK_MODEL and FALLBACK_MODEL != MODEL:
         models_to_try.append(FALLBACK_MODEL)
@@ -117,8 +123,8 @@ def chat(data: ChatIn, user: User = Depends(get_current_user)):
         except errors.APIError as err:
             last_code = getattr(err, "code", None)
             log.error("Gemini API error: model=%s code=%s message=%s", name, last_code, getattr(err, "message", ""))
-            if last_code in (429, 503):
-                continue   # busy ya limit: agla model try karo
+            if last_code in RETRY_CODES:
+                continue   # busy, slow ya limit: agla model try karo
             break
         except Exception as err:
             last_code = None
@@ -126,7 +132,7 @@ def chat(data: ChatIn, user: User = Depends(get_current_user)):
             break
 
     if result is None:
-        if last_code in (429, 503):
+        if last_code in RETRY_CODES:
             raise HTTPException(status_code=502, detail="The assistant is very busy right now. Please try again in a minute.")
         if last_code in (400, 401, 403, 404):
             raise HTTPException(status_code=503, detail="The AI assistant isn't set up correctly.")

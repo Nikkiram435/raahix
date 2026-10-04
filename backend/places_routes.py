@@ -73,6 +73,7 @@ class PlaceOut(BaseModel):
     address: str
     lat: float | None
     lon: float | None
+    wiki: str | None = None
 
 
 class PlaceDetailOut(PlaceOut):
@@ -155,7 +156,7 @@ def feature_to_row(props: dict, fallback_city: str):
     name = str(props.get("name") or "").strip()
     if not name or not ID_RE.match(pid):
         return None   # bina naam ya ganda id wali places nahi dikhate
-    return {
+    row = {
         "id": pid,
         "name": name[:200],
         "category": category_of(props.get("categories")),
@@ -164,6 +165,10 @@ def feature_to_row(props: dict, fallback_city: str):
         "lat": _num(props.get("lat")),
         "lon": _num(props.get("lon")),
     }
+    wiki = wiki_of(props)
+    if wiki:
+        row["wiki"] = wiki   # mile tabhi jodo, taaki purana wiki mita na jaye
+    return row
 
 
 def save_places(db: Session, rows: list[dict]) -> None:
@@ -209,6 +214,23 @@ def safe_phone(v):
     cleaned = re.sub(r"[^0-9+() -]", "", v.split(";")[0]).strip()
     return cleaned[:40] if len(re.sub(r"\D", "", cleaned)) >= 6 else None
 
+
+WIKI_RE = re.compile(r"^([a-z]{2,3}):(.{1,150})$")
+
+
+def safe_wiki(v):
+    """Sirf 'en:Title' jaisa format maanenge (bhasha ka code + article ka naam)."""
+    if not v:
+        return None
+    m = WIKI_RE.match(v.strip())
+    return f"{m.group(1)}:{m.group(2).strip()}" if m else None
+
+
+def wiki_of(props: dict):
+    media = props.get("wiki_and_media") if isinstance(props.get("wiki_and_media"), dict) else {}
+    ds = props.get("datasource") if isinstance(props.get("datasource"), dict) else {}
+    raw = ds.get("raw") if isinstance(ds.get("raw"), dict) else {}
+    return safe_wiki(first_text(media.get("wikipedia"), props.get("wikipedia"), raw.get("wikipedia")))
 
 def extract_details(props: dict):
     ds = props.get("datasource") if isinstance(props.get("datasource"), dict) else {}
@@ -305,6 +327,9 @@ def get_place(place_id: PlaceId, user: User = Depends(get_current_user), db: Ses
             if features:
                 props = (features[0] or {}).get("properties") or {}
                 place.phone, place.website, place.hours = extract_details(props)
+                wiki = wiki_of(props)
+                if wiki:
+                    place.wiki = wiki
             place.details_fetched = True
             db.commit()
             db.refresh(place)

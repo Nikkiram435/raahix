@@ -94,6 +94,21 @@ function render() {
     emoji.setAttribute("aria-hidden", "true");
     hero.append(emoji, el("span", "trip-badge", place.category), el("h1", "", place.name), el("p", "", whereOf(place)));
 
+    // Photo ka credit (photo aane par hi bharta hai)
+    const credit = el("p", "attribution photo-credit");
+    attachPhoto(hero, place, 960, (photo) => {
+        emoji.style.display = "none";
+        if (photo.page) {
+            const a = el("a", "", "Wikipedia: " + photo.title);
+            a.href = photo.page;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            credit.append("Photo: ", a, ". See the page for the author and licence.");
+        } else {
+            credit.textContent = "Photo: Wikipedia.";
+        }
+    });
+
     const actions = el("div", "place-actions");
     const save = el("button", "btn-ghost-outline" + (isSaved ? " saved" : ""), isSaved ? "♥ Saved" : "♡ Save");
     save.type = "button";
@@ -144,6 +159,8 @@ function render() {
         more.href = "explore.html?city=" + encodeURIComponent(place.city) + "&cat=" + encodeURIComponent(place.category);
         root.append(more);
     }
+
+    root.append(credit);
 }
 
 async function init() {

@@ -1,4 +1,5 @@
 # /api/saved: saved places ki list, save karna, hatana. Sab login ke baad hi.
+# place_id ab text hai: "f7" (featured place) ya Geoapify ki id.
 
 from typing import Annotated
 
@@ -15,12 +16,16 @@ router = APIRouter(prefix="/api/saved", tags=["saved"])
 
 MAX_SAVED_PER_USER = 500
 
-# Place id 1 se 1,000,000 ke beech hi maanya hai
-PlaceId = Annotated[int, Path(ge=1, le=1_000_000)]
+# Geoapify IDs 100+ characters ki ho sakti hain,
+# isliye yahan 300 characters tak allow kar rahe hain.
+PlaceId = Annotated[str, Path(min_length=1, max_length=300)]
 
 
-@router.get("", response_model=list[int])
-def list_saved(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+@router.get("", response_model=list[str])
+def list_saved(
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     return list(
         db.scalars(
             select(SavedPlace.place_id)
@@ -38,24 +43,33 @@ def save_place(
 ):
     already = db.scalar(
         select(SavedPlace.id).where(
-            SavedPlace.user_id == user.id, SavedPlace.place_id == place_id
+            SavedPlace.user_id == user.id,
+            SavedPlace.place_id == place_id,
         )
     )
+
     if already:
-        return Response(status_code=204)  # pehle se saved hai, koi dikkat nahi
+        return Response(status_code=204)
 
     count = db.scalar(
-        select(func.count()).select_from(SavedPlace).where(SavedPlace.user_id == user.id)
+        select(func.count())
+        .select_from(SavedPlace)
+        .where(SavedPlace.user_id == user.id)
     )
+
     if count >= MAX_SAVED_PER_USER:
-        raise HTTPException(status_code=400, detail="You have reached the limit of 500 saved places.")
+        raise HTTPException(
+            status_code=400,
+            detail="You have reached the limit of 500 saved places.",
+        )
 
     db.add(SavedPlace(user_id=user.id, place_id=place_id))
+
     try:
         db.commit()
     except IntegrityError:
-        # Do request ek saath aayi aur doosri pehle ho gayi: yeh bhi theek hai
         db.rollback()
+
     return Response(status_code=204)
 
 
@@ -67,8 +81,11 @@ def unsave_place(
 ):
     db.execute(
         delete(SavedPlace).where(
-            SavedPlace.user_id == user.id, SavedPlace.place_id == place_id
+            SavedPlace.user_id == user.id,
+            SavedPlace.place_id == place_id,
         )
     )
+
     db.commit()
+
     return Response(status_code=204)

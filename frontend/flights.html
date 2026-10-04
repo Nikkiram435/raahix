@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flights — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area form-page">
+
+            <div class="page-head">
+                <div>
+                    <h1>Flights</h1>
+                    <p class="page-sub">Pick your route and dates, and we'll open the live prices on Google Flights.</p>
+                </div>
+            </div>
+
+            <form class="trip-form" id="flightForm" novalidate>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="from">From</label>
+                        <input type="text" id="from" list="airports" maxlength="60" placeholder="e.g. Mumbai or BOM">
+                    </div>
+                    <div class="field">
+                        <label for="to">To</label>
+                        <input type="text" id="to" list="airports" maxlength="60" placeholder="e.g. Goa or GOI">
+                    </div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label for="depart">Depart</label>
+                        <input type="date" id="depart">
+                    </div>
+                    <div class="field">
+                        <label for="ret">Return (optional)</label>
+                        <input type="date" id="ret">
+                    </div>
+                </div>
+
+                <datalist id="airports">
+                    <option value="Mumbai (BOM)"><option value="Delhi (DEL)"><option value="Goa (GOI)">
+                    <option value="Goa Mopa (GOX)"><option value="Jaipur (JAI)"><option value="Bengaluru (BLR)">
+                    <option value="Kolkata (CCU)"><option value="Chennai (MAA)"><option value="Hyderabad (HYD)">
+                    <option value="Kochi (COK)"><option value="Thiruvananthapuram (TRV)"><option value="Udaipur (UDR)">
+                    <option value="Pune (PNQ)"><option value="Ahmedabad (AMD)"><option value="Amritsar (ATQ)">
+                    <option value="Varanasi (VNS)"><option value="Srinagar (SXR)"><option value="Leh (IXL)">
+                    <option value="Bhuntar, near Manali (KUU)"><option value="Chandigarh (IXC)"><option value="Lucknow (LKO)">
+                </datalist>
+
+                <p class="form-message" id="flightMsg" role="status"></p>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Search on Google Flights ↗</button>
+                </div>
+            </form>
+
+            <section class="place-section" style="margin-top: 28px;">
+                <h2>Booking tips</h2>
+                <ul class="tips-list">
+                    <li>Compare a few dates. Flying a day earlier or later can change the price a lot.</li>
+                    <li>Check the baggage rules and the final price before you pay.</li>
+                    <li>RAAHIX doesn't show prices or book flights. Prices are shown by Google Flights.</li>
+                </ul>
+            </section>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/flights.js"></script>
+</body>
+</html>

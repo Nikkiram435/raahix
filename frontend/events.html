@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events — RAAHIX</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="sidebar"></div>
+
+    <main class="main-content">
+        <section class="content-area">
+
+            <div class="page-head">
+                <div>
+                    <h1>Festivals &amp; events</h1>
+                    <p class="page-sub">Famous festivals across India, and roughly when to go.</p>
+                </div>
+            </div>
+
+            <div class="explore-bar">
+                <select class="filter-select" id="monthSelect" aria-label="Month"></select>
+                <input type="search" id="eventSearch" class="search-input" placeholder="Search by festival or place..." aria-label="Search festivals">
+            </div>
+
+            <p class="result-count" id="eventCount" role="status"></p>
+            <div class="place-grid" id="eventGrid"></div>
+
+            <p class="attribution">Dates change every year (many follow the lunar calendar). Please confirm exact dates on the official source before you book.</p>
+
+        </section>
+    </main>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/events.js"></script>
+</body>
+</html>

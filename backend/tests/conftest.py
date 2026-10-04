@@ -10,6 +10,7 @@ _tmp = Path(tempfile.mkdtemp(prefix="raahix_test_"))
 os.environ["DATABASE_URL"] = "sqlite:///" + (_tmp / "test.db").as_posix()
 os.environ["SECRET_KEY"] = "test-secret-key-for-pytest-only-1234567890"
 os.environ["GEMINI_API_KEY"] = ""   # tests kabhi asli AI ko call na karein
+os.environ["GEOAPIFY_API_KEY"] = ""
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
@@ -45,3 +46,4 @@ def alice(client):
 @pytest.fixture()
 def bob(client):
     return make_user(client, "bob@example.com", "Bob")
+

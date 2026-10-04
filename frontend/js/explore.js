@@ -1,22 +1,44 @@
-// Explore: city, search aur category se places filter karta hai.
-// Heart button se place backend (database) mein save hota hai.
+// Explore: city search, category tabs aur infinite scroll.
+// Featured places (places-data.js) pehle, phir backend (Geoapify) se baaki, scroll karne par.
 
 const grid = document.getElementById("placeGrid");
 const countEl = document.getElementById("resultCount");
-const citySelect = document.getElementById("citySelect");
+const statusEl = document.getElementById("listStatus");
+const subEl = document.getElementById("exploreSub");
+const sentinel = document.getElementById("sentinel");
+const cityForm = document.getElementById("cityForm");
+const cityInput = document.getElementById("cityInput");
 const searchInput = document.getElementById("searchInput");
 const tabs = document.querySelectorAll("#categoryTabs .tab");
 
+const params = new URLSearchParams(window.location.search);
+let city = (params.get("city") || "Mumbai").trim().slice(0, 80) || "Mumbai";
 let activeCategory = "All";
-let savedIds = [];
-let loadFailed = false;
-const pending = new Set();   // jin places ki request abhi chal rahi hai
 
-function el(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text !== undefined) node.textContent = text;
-    return node;
+let items = [];            // backend se aayi places
+let seen = new Set();
+let page = 0;
+let hasMore = false;
+let loading = false;
+let emptyStreak = 0;
+let apiError = "";
+let placeLabel = "";
+let requestId = 0;         // purane jawab ko pehchanne ke liye
+let savedIds = [];
+const pending = new Set();
+
+function featuredFor() {
+    const loggedIn = !!getToken();
+    return PLACES.filter((p) =>
+        (activeCategory === "All" || p.category === activeCategory) &&
+        (!loggedIn || p.city.toLowerCase() === city.toLowerCase())
+    );
+}
+
+function matches(p, q) {
+    if (!q) return true;
+    return ((p.name || "") + " " + (p.city || "") + " " + (p.tags || "") + " " + (p.address || ""))
+        .toLowerCase().includes(q);
 }
 
 async function toggleSaved(id) {
@@ -27,16 +49,15 @@ async function toggleSaved(id) {
     if (pending.has(id)) return;
     pending.add(id);
 
-    const wasSaved = savedIds.includes(id);
-    savedIds = wasSaved ? savedIds.filter((x) => x !== id) : savedIds.concat(id);
+    const was = savedIds.includes(id);
+    savedIds = was ? savedIds.filter((x) => x !== id) : savedIds.concat(id);
     render();   // heart turant badal do
 
     try {
-        if (wasSaved) await Saved.unsave(id);
+        if (was) await Saved.unsave(id);
         else await Saved.save(id);
     } catch (err) {
-        // Backend ne mana kiya: heart wapas purani halat mein
-        savedIds = wasSaved ? savedIds.concat(id) : savedIds.filter((x) => x !== id);
+        savedIds = was ? savedIds.concat(id) : savedIds.filter((x) => x !== id);
         render();
         alert(err.message);
     } finally {
@@ -44,99 +65,140 @@ async function toggleSaved(id) {
     }
 }
 
-function buildCard(place, isSaved) {
-    const card = el("article", "place-card");
-
-    const cover = el("div", "place-cover trip-cover cover-" + (place.id % 6), place.emoji);
-    cover.append(el("span", "place-cat", place.category));
-
-    const heart = el("button", "heart-btn", isSaved ? "♥" : "♡");
-    heart.type = "button";
-    heart.setAttribute("aria-pressed", String(isSaved));
-    heart.setAttribute("aria-label", (isSaved ? "Remove " : "Save ") + place.name);
-    heart.addEventListener("click", () => toggleSaved(place.id));
-    cover.append(heart);
-
-    const body = el("div", "place-body");
-    body.append(
-        el("h3", "", place.name),
-        el("p", "place-city", place.city),
-        el("p", "place-tags", place.tags)
-    );
-
-    card.append(cover, body);
-    return card;
-}
-
 function render() {
-    const city = citySelect.value;
-    const query = searchInput.value.trim().toLowerCase();
-
-    const shown = PLACES.filter((p) => {
-        if (city !== "All" && p.city !== city) return false;
-        if (activeCategory !== "All" && p.category !== activeCategory) return false;
-        if (query) {
-            const haystack = (p.name + " " + p.city + " " + p.category + " " + p.tags).toLowerCase();
-            if (!haystack.includes(query)) return false;
-        }
-        return true;
-    });
+    const q = searchInput.value.trim().toLowerCase();
+    const list = featuredFor().concat(items).filter((p) => matches(p, q));
 
     grid.innerHTML = "";
-    countEl.textContent = shown.length + (shown.length === 1 ? " place" : " places") +
-        (loadFailed ? " (couldn't load your saved places)" : "");
+    list.forEach((p) => grid.append(buildPlaceCard(p, savedIds.includes(p.id), toggleSaved)));
 
-    if (shown.length === 0) {
+    countEl.textContent = list.length + (list.length === 1 ? " place" : " places") + (q ? " match your filter" : "");
+    subEl.textContent = getToken()
+        ? "Places in " + (placeLabel || city)
+        : "Featured places. Log in to explore any city.";
+
+    if (list.length === 0 && !loading) {
         const box = el("div", "empty-state");
         box.style.gridColumn = "1 / -1";
         box.append(
             el("div", "empty-art", "🔍"),
             el("h3", "", "No places match"),
-            el("p", "", "Try a different city, category or search word.")
+            el("p", "", "Try a different city, category or filter.")
         );
         grid.append(box);
-        return;
     }
 
-    shown.forEach((p) => grid.append(buildCard(p, savedIds.includes(p.id))));
+    statusEl.textContent = "";
+    if (!getToken()) {
+        const link = el("a", "", "Log in to see more places");
+        link.href = "login.html";
+        statusEl.append(link);
+    } else if (loading) {
+        statusEl.textContent = "Loading more places...";
+    } else if (apiError) {
+        statusEl.textContent = apiError + (items.length ? "" : " Showing featured places only.");
+    } else if (!hasMore && items.length) {
+        statusEl.textContent = "That's everything we found for this search.";
+    }
 }
 
-// City dropdown places-data se banta hai
-const cities = ["All", ...new Set(PLACES.map((p) => p.city))];
-cities.forEach((c) => {
-    const opt = el("option", "", c === "All" ? "All cities" : c);
-    opt.value = c;
-    citySelect.append(opt);
-});
+// Sentinel (list ke neeche ka chhota point) screen ke paas aaye toh agla page lao
+function maybeLoadMore() {
+    if (loading || !hasMore) return;
+    if (sentinel.getBoundingClientRect().top < window.innerHeight + 300) loadMore();
+}
+
+async function loadMore() {
+    if (loading || !hasMore || !getToken()) return;
+    loading = true;
+    const mine = requestId;
+    render();
+
+    try {
+        const data = await Places.search(city, activeCategory, page);
+        if (mine !== requestId) return;   // is dauran search badal gayi
+
+        placeLabel = data.place;
+        let added = 0;
+        data.items.forEach((p) => {
+            if (!seen.has(p.id)) {
+                seen.add(p.id);
+                items.push(p);
+                added += 1;
+            }
+        });
+        emptyStreak = added === 0 ? emptyStreak + 1 : 0;
+        hasMore = data.has_more && emptyStreak < 3;
+        page += 1;
+        apiError = "";
+    } catch (err) {
+        if (mine !== requestId) return;
+        apiError = err.message;
+        hasMore = false;
+    } finally {
+        if (mine === requestId) {
+            loading = false;
+            render();
+            maybeLoadMore();
+        }
+    }
+}
+
+function startSearch() {
+    requestId += 1;
+    items = [];
+    seen = new Set();
+    page = 0;
+    emptyStreak = 0;
+    apiError = "";
+    placeLabel = "";
+    loading = false;
+    hasMore = !!getToken();
+
+    // NAYA: city aur tab URL mein save karo, taaki page reload ho toh bhi na khoyein
+    const url = new URL(window.location.href);
+    url.searchParams.set("city", city);
+    url.searchParams.set("cat", activeCategory);
+    history.replaceState(null, "", url);
+
+    render();
+    loadMore();   // pehla page turant
+}
 
 tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
         activeCategory = tab.dataset.cat;
         tabs.forEach((t) => t.classList.toggle("active", t === tab));
-        render();
+        startSearch();
     });
 });
 
-citySelect.addEventListener("change", render);
-searchInput.addEventListener("input", render);
+cityForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const value = cityInput.value.trim();
+    if (!value) return;
+    city = value;
+    startSearch();
+});
 
-// Home ki category bar se aaya ho (explore.html?cat=Stays), toh wahi tab kholo
-const wantedCat = new URLSearchParams(window.location.search).get("cat");
-if (wantedCat && [...tabs].some((t) => t.dataset.cat === wantedCat)) {
-    activeCategory = wantedCat;
-    tabs.forEach((t) => t.classList.toggle("active", t.dataset.cat === wantedCat));
-}
+searchInput.addEventListener("input", render);
+window.addEventListener("scroll", maybeLoadMore, { passive: true });
+window.addEventListener("resize", maybeLoadMore);
 
 async function init() {
-    render();   // places turant dikhao, hearts baad mein bharenge
-    if (!getToken()) return;
+    cityInput.value = city;
 
-    try {
-        savedIds = await Saved.list();
-    } catch (err) {
-        loadFailed = true;
+    // Home ya Place page se aaya ho (explore.html?city=Goa&cat=Stays)
+    const cat = params.get("cat");
+    if (cat && [...tabs].some((t) => t.dataset.cat === cat)) {
+        activeCategory = cat;
+        tabs.forEach((t) => t.classList.toggle("active", t.dataset.cat === cat));
     }
-    render();
+
+    if (getToken()) {
+        try { savedIds = await Saved.list(); } catch (err) {}
+    }
+    startSearch();
 }
 
 init();

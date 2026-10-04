@@ -154,3 +154,23 @@ const Weather = {
         return apiRequest("/api/weather?city=" + encodeURIComponent(city), { auth: true });
     },
 };
+
+// ---------- Places (Geoapify, backend ke through) ----------
+
+const Places = {
+    async search(city, category, page) {
+        return apiRequest(
+            "/api/places?city=" + encodeURIComponent(city) +
+            "&category=" + encodeURIComponent(category) + "&page=" + page,
+            { auth: true }
+        );
+    },
+
+    async get(id) {
+        return apiRequest("/api/places/" + encodeURIComponent(id), { auth: true });
+    },
+
+    async lookup(ids) {
+        return apiRequest("/api/places/lookup?ids=" + encodeURIComponent(ids.join(",")), { auth: true });
+    },
+};

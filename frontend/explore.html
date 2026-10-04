@@ -16,14 +16,24 @@
             <div class="page-head">
                 <div>
                     <h1>Explore</h1>
-                    <p class="page-sub">Sample places to get you started.</p>
+                    <p class="page-sub" id="exploreSub"></p>
                 </div>
             </div>
 
-            <div class="explore-bar">
-                <select class="filter-select" id="citySelect" aria-label="Choose a city"></select>
-                <input type="search" id="searchInput" class="search-input" placeholder="Search places, food, beaches..." aria-label="Search places">
-            </div>
+            <form class="explore-bar" id="cityForm">
+                <input type="text" id="cityInput" class="search-input" list="cityList" maxlength="80"
+                       placeholder="City (e.g. Goa, Jaipur, Udaipur)" aria-label="City">
+                <datalist id="cityList">
+                    <option value="Mumbai"><option value="Delhi"><option value="Goa"><option value="Jaipur">
+                    <option value="Udaipur"><option value="Manali"><option value="Kerala"><option value="Bengaluru">
+                    <option value="Kolkata"><option value="Chennai"><option value="Rishikesh"><option value="Varanasi">
+                    <option value="Shimla"><option value="Hyderabad">
+                </datalist>
+                <button type="submit" class="btn-primary city-go">Search</button>
+            </form>
+
+            <input type="search" id="searchInput" class="search-input filter-input"
+                   placeholder="Filter the places below by name..." aria-label="Filter results by name">
 
             <div class="tabs" id="categoryTabs">
                 <button class="tab active" data-cat="All">For you</button>
@@ -35,6 +45,9 @@
 
             <p class="result-count" id="resultCount" role="status"></p>
             <div class="place-grid" id="placeGrid"></div>
+            <p class="list-note" id="listStatus" role="status"></p>
+            <div id="sentinel" class="sentinel"></div>
+            <p class="attribution">Place data © OpenStreetMap contributors, via Geoapify.</p>
 
         </section>
     </main>

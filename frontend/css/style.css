@@ -899,3 +899,52 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .weather-rain { color: #38bdf8 !important; }
 
 .weather-row + .weather-note { margin-top: 12px; }
+
+/* ============ PLACE DETAILS ============ */
+/* Card ke title par link, jo poore card ko clickable bana deta hai (heart alag kaam karta hai) */
+.place-card { position: relative; }
+.place-link { color: inherit; }
+.place-link::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.place-link:focus-visible { outline: none; }
+.place-card:focus-within { border-color: var(--violet); }
+.place-card .heart-btn { z-index: 2; }
+
+.detail-hero .place-emoji { position: absolute; right: 28px; top: 20px; font-size: 4rem; z-index: 1; }
+.place-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+.btn-ghost-outline.saved { background: rgba(139, 92, 246, 0.25); border-color: var(--violet); }
+
+.place-section { margin-bottom: 28px; }
+.place-section h2 { font-size: 1.2rem; margin-bottom: 10px; }
+.place-about { color: #cfcde6; max-width: 70ch; line-height: 1.7; margin-bottom: 12px; }
+
+.tips-list { list-style: none; display: flex; flex-direction: column; gap: 8px; max-width: 70ch; margin-bottom: 8px; }
+.tips-list li { padding: 10px 14px; border-radius: 10px; font-size: 0.9rem; background: rgba(139, 92, 246, 0.12); }
+
+@media (max-width: 600px) {
+  .detail-hero .place-emoji { font-size: 3rem; right: 18px; }
+}
+
+/* ============ EXPLORE (infinite scroll), PLACE INFO, FLIGHTS, EVENTS ============ */
+.city-go { padding: 11px 22px; white-space: nowrap; }
+.filter-input { width: 100%; margin-bottom: 18px; }
+.sentinel { height: 1px; }
+.attribution { color: var(--muted); font-size: 0.72rem; margin-top: 18px; text-align: center; }
+.place-tags { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.info-rows { display: grid; gap: 10px; max-width: 70ch; margin-bottom: 8px; }
+.info-row {
+  display: flex; gap: 14px; padding: 12px 14px; font-size: 0.9rem;
+  border-radius: 10px; background: var(--panel); border: 1px solid var(--line);
+}
+.info-label { color: var(--muted); min-width: 70px; }
+.info-row > :last-child { overflow-wrap: anywhere; }
+.info-row a { color: var(--violet); text-decoration: underline; }
+
+/* Events */
+.event-card { padding: 18px; border-radius: var(--r-lg); background: var(--panel); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.event-card h3 { font-size: 1.05rem; }
+.event-when { color: var(--violet); font-size: 0.8rem; font-weight: 600; }
+.event-where { color: var(--muted); font-size: 0.82rem; }
+.event-about { font-size: 0.88rem; color: #cfcde6; line-height: 1.6; }
+.event-tip { font-size: 0.8rem; padding: 8px 12px; border-radius: 10px; background: rgba(139, 92, 246, 0.12); }
+.month-badge { align-self: flex-start; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; background: var(--grad); }

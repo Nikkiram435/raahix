@@ -198,6 +198,7 @@ async function init() {
     if (getToken()) {
         try { savedIds = await Saved.list(); } catch (err) {}
     }
+
     startSearch();
 }
 

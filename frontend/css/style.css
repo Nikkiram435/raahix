@@ -949,6 +949,3 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .event-tip { font-size: 0.8rem; padding: 8px 12px; border-radius: 10px; background: rgba(139, 92, 246, 0.12); }
 .month-badge { align-self: flex-start; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; background: var(--grad); }
 
-/* Photos */
-.has-photo { background-size: cover; background-position: center; }
-.photo-credit a { color: var(--violet); text-decoration: underline; }

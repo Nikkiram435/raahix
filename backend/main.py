@@ -29,6 +29,8 @@ app.include_router(chat_router)
 app.include_router(weather_router)
 app.include_router(places_router)
 
+
+
 @app.get("/api/health")
 def health():
     return {"status": "ok", "app": "RAAHIX"}

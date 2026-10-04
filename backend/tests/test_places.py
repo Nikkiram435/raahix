@@ -113,13 +113,3 @@ def test_lookup_keeps_order_and_ignores_bad_ids(client, alice):
     res = client.get("/api/places/lookup", params={"ids": "p2,bad id!,p1,nope"}, headers=alice)
     assert [p["id"] for p in res.json()] == ["p2", "p1"]
 
-def test_wiki_link_is_kept(client, alice, fake_geoapify):
-    fake_geoapify["details"] = {"wiki_and_media": {"wikipedia": "en:Gateway of India"}}
-    client.get("/api/places", params=SEARCH, headers=alice)
-    assert client.get("/api/places/p1", headers=alice).json()["wiki"] == "en:Gateway of India"
-
-
-def test_bad_wiki_value_is_dropped(client, alice, fake_geoapify):
-    fake_geoapify["details"] = {"wiki_and_media": {"wikipedia": "../evil:x"}}
-    client.get("/api/places", params=SEARCH, headers=alice)
-    assert client.get("/api/places/p1", headers=alice).json()["wiki"] is None

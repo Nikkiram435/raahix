@@ -66,4 +66,3 @@ class Place(Base):
     website: Mapped[str | None] = mapped_column(String(300), nullable=True)
     hours: Mapped[str | None] = mapped_column(String(200), nullable=True)
     details_fetched: Mapped[bool] = mapped_column(Boolean, default=False)
-    wiki: Mapped[str | None] = mapped_column(String(200), nullable=True)

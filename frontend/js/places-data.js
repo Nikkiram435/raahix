@@ -124,82 +124,6 @@ function placeUrl(place) {
     return "place.html?id=" + encodeURIComponent(place.id);
 }
 
-
-// ---------- Photos (Wikipedia se, sirf pakke linked article ki) ----------
-
-// Featured places ke liye: place ka naam (chhote akshar mein) -> "bhasha:Article ka naam".
-// Naya jodne se pehle Wikipedia ka page kholkar dekho ki article wahi place hai.
-// Naam tumhare PLACES ke "name" se bilkul match hona chahiye, warna photo nahi aayegi.
-const FEATURED_WIKI = {
-    "gateway of india": "en:Gateway of India",
-    "hawa mahal": "en:Hawa Mahal",
-    "taj mahal": "en:Taj Mahal",
-    "amber fort": "en:Amer Fort",
-    "basilica of bom jesus": "en:Basilica of Bom Jesus",
-};
-
-const photoCache = new Map();
-
-function wikiRef(place) {
-    const ref = place.wiki || FEATURED_WIKI[String(place.name || "").toLowerCase()];
-    if (!ref) return null;
-    const m = /^([a-z]{2,3}):(.{1,150})$/.exec(ref);
-    return m ? { lang: m[1], title: m[2].trim() } : null;
-}
-
-// Wikipedia ka summary laata hai. Photo sirf tab, jab article asli ho (disambiguation nahi).
-function fetchPhoto(ref) {
-    const key = ref.lang + ":" + ref.title;
-    if (photoCache.has(key)) return photoCache.get(key);
-
-    const job = (async () => {
-        try {
-            const res = await fetch(
-                "https://" + ref.lang + ".wikipedia.org/api/rest_v1/page/summary/" +
-                encodeURIComponent(ref.title.replace(/ /g, "_"))
-            );
-            if (!res.ok) return null;
-            const d = await res.json();
-            if (d.type !== "standard") return null;
-
-            const thumb = d.thumbnail && d.thumbnail.source;
-            if (!thumb || !/^https:\/\/upload\.wikimedia\.org\//.test(thumb)) return null;
-
-            const page = d.content_urls && d.content_urls.desktop && d.content_urls.desktop.page;
-            return {
-                url: thumb,
-                origWidth: (d.originalimage && d.originalimage.width) || 0,
-                page: typeof page === "string" && page.startsWith("https://") ? page : null,
-                title: String(d.title || ref.title),
-            };
-        } catch (err) {
-            return null;
-        }
-    })();
-
-    photoCache.set(key, job);
-    return job;
-}
-
-// Kisi bhi box (card ka cover ya hero) par photo lagao. Photo na mile toh kuch nahi badalta.
-function attachPhoto(node, place, width, onPhoto) {
-    const ref = wikiRef(place);
-    if (!ref) return;
-
-    fetchPhoto(ref).then((photo) => {
-        if (!photo || !node.isConnected) return;
-
-        // Badi photo tabhi maango jab original utni badi ho (warna Wikimedia error deta hai)
-        const src = photo.origWidth >= width ? photo.url.replace(/\/\d+px-/, "/" + width + "px-") : photo.url;
-        node.style.backgroundImage =
-            'linear-gradient(rgba(0,0,0,.2), rgba(0,0,0,.55)), url("' + src.replace(/"/g, "%22") + '")';
-        node.classList.add("has-photo");
-        [...node.childNodes].forEach((n) => { if (n.nodeType === 3) n.remove(); });   // emoji hatao
-
-        if (onPhoto) onPhoto(photo);
-    });
-}
-
 // Ek place ka card. onHeart na do toh heart button nahi dikhta.
 function buildPlaceCard(place, isSaved, onHeart) {
     const card = el("article", "place-card");
@@ -215,8 +139,6 @@ function buildPlaceCard(place, isSaved, onHeart) {
         heart.addEventListener("click", () => onHeart(place.id));
         cover.append(heart);
     }
-
-    attachPhoto(cover, place, 640);
 
     const body = el("div", "place-body");
     const title = el("h3");

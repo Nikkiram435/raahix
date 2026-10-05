@@ -1,5 +1,3 @@
-# /api/trips: list, banana, ek trip dekhna, badalna, hatana. Sab login ke baad hi.
-
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -60,7 +58,7 @@ def update_trip(
 ):
     trip = get_owned_trip(db, user, trip_id)
 
-    # Sirf wahi badlo jo bheja gaya hai (null wale ko chhod do)
+    
     changes = {k: v for k, v in data.model_dump(exclude_unset=True).items() if v is not None}
 
     start = changes.get("start_date", trip.start_date)

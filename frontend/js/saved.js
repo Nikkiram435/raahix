@@ -1,5 +1,3 @@
-// Saved: featured aur Geoapify, dono tarah ke saved places dikhata hai.
-
 requireLogin();
 
 const grid = document.getElementById("savedGrid");

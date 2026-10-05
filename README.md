@@ -33,7 +33,7 @@ The **demo video is the preferred way to explore the project**, as the current R
 
 ### Live Application
 
-raahix-production.up.railway.app
+(https://raahix-production.up.railway.app/)
 
 > **Note:** The live application is currently deployed on Railway under a limited trial environment. The live URL may become unavailable after the trial period ends. For long-term access, please refer to the demo video.
 

@@ -502,7 +502,7 @@ Savitribai Phule Pune University
 ### Profiles
 
 * LinkedIn: https://www.linkedin.com/in/nikki-ram-339244289/
-* GitHub: https://github.com/textgithum
+* GitHub: https://github.com/Nikkiram435
 * Portfolio: https://nikkiram435.github.io/portfolio/
 
 ---

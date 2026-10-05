@@ -1,6 +1,3 @@
-# /api/weather?city=Goa: city ka 16 din ka mausam (Open-Meteo se, bina API key ke).
-# Sirf login kiye hue user ke liye. Har city ka jawab 30 minute yaad rakha jaata hai.
-
 import logging
 import time
 

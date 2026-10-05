@@ -1,5 +1,3 @@
-// Profile: naam, email aur counters dikhata hai. Log out aur trips/saved delete bhi yahin hota hai.
-
 (function () {
     const $ = (id) => document.getElementById(id);
 
@@ -33,7 +31,7 @@
     async function render() {
         const user = read("raahix_user", null);
 
-        // Login nahi hai (ya token nahi hai): guest view
+        
         if (!user || !getToken()) {
             $("guestView").hidden = false;
             $("userView").hidden = true;
@@ -61,7 +59,7 @@
         }
     }
 
-    // Naam abhi sirf is browser mein badalta hai (backend mein naam badalne ka endpoint baad mein aayega)
+    
     $("nameForm").addEventListener("submit", (e) => {
         e.preventDefault();
         const user = read("raahix_user", null);

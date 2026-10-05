@@ -341,27 +341,36 @@ Screenshots of the application will be added here to showcase the main user flow
 
 ### Home / Landing Page
 
-*Add screenshot here*
+<img width="1882" height="862" alt="image" src="https://github.com/user-attachments/assets/15fcca1e-570a-4e57-b4d1-0fe6e1060192" />
+<img width="1887" height="857" alt="image" src="https://github.com/user-attachments/assets/ff9976c1-2092-4560-baf0-f7252b5bef58" />
+<img width="1891" height="871" alt="image" src="https://github.com/user-attachments/assets/2ea7209f-4c6a-482f-be8b-062aaf5f1c71" />
+<img width="1896" height="857" alt="image" src="https://github.com/user-attachments/assets/3a47cdb4-27c0-43db-a14f-4f1670d64ab6" />
 
 ### Explore Places
 
-*Add screenshot here*
+<img width="1883" height="877" alt="image" src="https://github.com/user-attachments/assets/aefcbbd8-fce3-4c5e-8f6a-e9571fd837c1" />
+<img width="1870" height="860" alt="image" src="https://github.com/user-attachments/assets/0f7761ee-5924-4252-9492-c30547868025" />
 
 ### AI Trip Planner
 
-*Add screenshot here*
+<img width="1882" height="877" alt="image" src="https://github.com/user-attachments/assets/491394fd-d348-4007-a766-060c9008dab1" />
 
 ### Trip Dashboard
 
-*Add screenshot here*
+<img width="1917" height="865" alt="image" src="https://github.com/user-attachments/assets/7ef8cbe9-53e1-42b4-8cd3-46682d741c5e" />
+<img width="1896" height="865" alt="image" src="https://github.com/user-attachments/assets/1f618eb7-89dc-4fef-9057-b0b259bd8a2d" />
 
 ### Saved Places
 
-*Add screenshot here*
+<img width="1907" height="873" alt="image" src="https://github.com/user-attachments/assets/fe51533e-a87b-41e2-ac5e-dee356ac4750" />
 
 ### AI Travel Assistant
 
-*Add screenshot here*
+<img width="1908" height="867" alt="image" src="https://github.com/user-attachments/assets/eaa6a55f-afdc-4958-9271-dbec56221090" />
+<img width="1882" height="866" alt="image" src="https://github.com/user-attachments/assets/d80776dc-5908-42d2-a1b2-57735c0c638c" />
+<img width="1905" height="876" alt="image" src="https://github.com/user-attachments/assets/29e5cbb7-4ecd-4c02-9782-6c53ff16962a" />
+<img width="1902" height="861" alt="image" src="https://github.com/user-attachments/assets/5ae78d6a-54c1-4803-8416-66b9d7deef7d" />
+
 
 ---
 

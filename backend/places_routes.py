@@ -1,6 +1,3 @@
-# /api/places: Geoapify (OpenStreetMap data) se places. API key sirf server par rehti hai.
-# Sirf login kiye hue user ke liye, aur har jawab yaad rakha jaata hai taaki free quota bache.
-
 import logging
 import os
 import re
@@ -41,13 +38,13 @@ CATEGORY_QUERIES = {
 ID_RE = re.compile(r"^[A-Za-z0-9_-]{1,100}$")
 PlaceId = Annotated[str, Path(pattern=r"^[A-Za-z0-9_-]{1,100}$")]
 
-GEO_TTL = 86400      # city ki location 24 ghante yaad
-PAGE_TTL = 3600      # places ka page 1 ghanta yaad
+GEO_TTL = 86400      
+PAGE_TTL = 3600      
 MAX_CACHE = 500
 _geo_cache: dict = {}
 _page_cache: dict = {}
 
-# Ek user 10 minute mein 60 baar tak (quota bachane ke liye)
+
 WINDOW_SECONDS = 600
 MAX_REQUESTS = 60
 _recent: dict[int, deque] = defaultdict(deque)
@@ -126,7 +123,7 @@ def locate(city: str) -> dict:
     if lon is None or lat is None:
         raise HTTPException(status_code=502, detail="Places aren't available right now. Please try again later.")
 
-    # Poora shehar/state dhundhne ke liye bounding box, na mile toh 15 km ka gola
+  
     bbox = r.get("bbox") if isinstance(r.get("bbox"), dict) else {}
     corners = [_num(bbox.get(k)) for k in ("lon1", "lat1", "lon2", "lat2")]
     area = "rect:" + ",".join(str(c) for c in corners) if None not in corners else f"circle:{lon},{lat},15000"
@@ -154,7 +151,7 @@ def feature_to_row(props: dict, fallback_city: str):
     pid = str(props.get("place_id") or "")
     name = str(props.get("name") or "").strip()
     if not name or not ID_RE.match(pid):
-        return None   # bina naam ya ganda id wali places nahi dikhate
+        return None   
     return {
         "id": pid,
         "name": name[:200],
@@ -174,7 +171,7 @@ def save_places(db: Session, rows: list[dict]) -> None:
         place = existing.get(r["id"])
         if place:
             for k, v in r.items():
-                setattr(place, k, v)   # phone/website/hours ko nahi chhuete
+                setattr(place, k, v)   
         else:
             db.add(Place(**r))
     db.commit()
@@ -244,7 +241,7 @@ def search_places(
     data = geoapify_get("/v2/places", {
         "categories": CATEGORY_QUERIES[category],
         "filter": geo["filter"],
-        "bias": f"proximity:{geo['lon']},{geo['lat']}",   # shehar ke beech se paas waale pehle
+        "bias": f"proximity:{geo['lon']},{geo['lat']}",   
         "limit": PAGE_SIZE,
         "offset": page * PAGE_SIZE,
         "lang": "en",
@@ -271,7 +268,7 @@ def search_places(
     return result
 
 
-# /lookup, /{place_id} se pehle likhna zaroori hai
+
 @router.get("/lookup", response_model=list[PlaceOut])
 def lookup_places(
     ids: str = Query(max_length=3200),
@@ -293,13 +290,12 @@ def get_place(place_id: PlaceId, user: User = Depends(get_current_user), db: Ses
     if place is None:
         raise HTTPException(status_code=404, detail="Place not found.")
 
-    # Details sirf ek baar laate hain (1 credit), phir database se
     if not place.details_fetched and API_KEY:
         try:
             check_rate_limit(user.id)
             data = geoapify_get("/v2/place-details", {"id": place_id, "features": "details"})
         except HTTPException:
-            data = None   # details na mile toh bhi basic info dikhao
+            data = None   
         if data is not None:
             features = data.get("features") or []
             if features:

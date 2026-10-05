@@ -76,9 +76,11 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 
 .profile-mini {
   display: flex; align-items: center; gap: 11px;
-  margin-top: 10px; padding: 10px;
-  background: var(--panel); border: 1px solid var(--line);
-  border-radius: var(--r-md);
+  /* sidebar ke padding (14px left/right, 16px bottom) ko cancel karke edge-to-edge */
+  margin: 10px -14px -16px; padding: 14px 20px;
+  background: var(--panel);
+  border: 0; border-top: 1px solid var(--line);
+  border-radius: 0;
   transition: background 0.15s;
 }
 .profile-mini:hover { background: var(--panel-hover); }
@@ -312,7 +314,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .chat-send:hover { filter: brightness(1.12); }
 .chat-note { margin-top: 9px; font-size: 0.72rem; color: var(--muted); }
 
-/* ============ FOOTER ============ */
+/* ============ FOOTER (other pages) ============ */
 .app-footer {
   display: flex; justify-content: space-between; align-items: center;
   padding: 10px 32px 18px; font-size: 0.75rem; color: var(--muted);
@@ -949,3 +951,250 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; background: 
 .event-tip { font-size: 0.8rem; padding: 8px 12px; border-radius: 10px; background: rgba(139, 92, 246, 0.12); }
 .month-badge { align-self: flex-start; padding: 3px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; background: var(--grad); }
 
+
+/* =====================================================================
+   HOME PAGE ONLY (body class="home")
+   Background: P1-P4 poore page ke peeche fixed, crossfade + halka zoom
+   ===================================================================== */
+.home .main-content { position: relative; }
+.home .content-area { position: relative; z-index: 1; }
+
+/* ---------- Background: viewport par fixed, scroll par bhi poori screen mein ---------- */
+.hero-bg {
+  position: fixed; top: 0; bottom: 0; right: 0; left: 0;
+  z-index: 0; overflow: hidden; pointer-events: none;
+  background: #07070f;
+}
+.hero-slide {
+  position: absolute; inset: 0; opacity: 0;
+  background-size: cover; background-position: center;
+  animation: heroFade 24s linear infinite backwards;
+  will-change: opacity, transform;
+}
+.hero-slide.s1 { background-image: url("../assets/images/P1.jpg"); animation-delay: 0s; }
+.hero-slide.s2 { background-image: url("../assets/images/P2.jpg"); animation-delay: 6s; }
+.hero-slide.s3 { background-image: url("../assets/images/P3.jpg"); animation-delay: 12s; }
+.hero-slide.s4 { background-image: url("../assets/images/P4.jpg"); animation-delay: 18s; }
+
+/* Halka overlay: photo saaf dikhe, text bhi padha jaye */
+.hero-shade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(7, 7, 15, 0.30) 0%, rgba(7, 7, 15, 0.38) 60%, rgba(7, 7, 15, 0.50) 100%),
+    radial-gradient(900px 420px at 85% 0%, rgba(139, 92, 246, 0.16), transparent 70%);
+}
+
+@media (max-width: 600px) {
+  .hero-bg { bottom: 0; }
+}
+
+/* ---------- Sidebar: transparent glass, peeche photo dikhe ---------- */
+body.has-bg .sidebar {
+  background: rgba(10, 10, 22, 0.22);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+          backdrop-filter: blur(14px) saturate(140%);
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+}
+body.has-bg .sidebar .nav-item { color: #e4e2f5; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+body.has-bg .sidebar .nav-item:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+body.has-bg .sidebar .nav-item.active {
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.4), rgba(139, 92, 246, 0.1));
+  color: #fff;
+}
+body.has-bg .sidebar .brand { text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6); }
+body.has-bg .sidebar .profile-mini {
+  background: rgba(255, 255, 255, 0.07);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+body.has-bg .sidebar .profile-mini:hover { background: rgba(255, 255, 255, 0.14); }
+body.has-bg .sidebar .profile-info strong { text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+body.has-bg .sidebar .profile-info small,
+body.has-bg .sidebar .more-icon { color: #e0def2; }
+
+@media (max-width: 600px) {
+  body.has-bg .sidebar { background: rgba(10, 10, 22, 0.55); }
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes heroFade {
+  0%   { opacity: 0; transform: scale(1); }
+  5%   { opacity: 1; }
+  25%  { opacity: 1; }
+  31%  { opacity: 0; transform: scale(1.12); }
+  100% { opacity: 0; transform: scale(1.12); }
+}
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.25), 0 0 0 12px rgba(255, 255, 255, 0.05); }
+  100% { box-shadow: 0 0 0 26px rgba(255, 255, 255, 0), 0 0 0 12px rgba(255, 255, 255, 0.05); }
+}
+
+/* ---------- Topbar (upar) aur chat bar (neeche): fixed, scroll nahi hote ---------- */
+.home .main-content { padding-top: 72px; padding-bottom: 125px; }
+
+.home .topbar {
+  position: fixed; top: 0; left: var(--sidebar-w); right: 0;
+  background: rgba(7, 7, 15, 0.4);
+}
+.home .chat-area {
+  position: fixed; bottom: 0; left: var(--sidebar-w); right: 0;
+  background: none;
+}
+
+@media (max-width: 600px) {
+  .home .main-content { padding-top: 58px; padding-bottom: 190px; }
+  .home .topbar { left: 0; }
+  .home .chat-area { left: 0; bottom: 62px; }
+}
+
+/* ---------- Hero text ---------- */
+.home .welcome-section h1 { filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.55)); }
+.home .welcome-text { color: #ecebf8; text-shadow: 0 1px 14px rgba(0, 0, 0, 0.6); }
+
+.home .welcome-section > * { animation: riseIn 0.5s ease backwards; }
+.home .welcome-section > .welcome-icon { animation: riseIn 0.5s ease 0.05s backwards, floatY 4s ease-in-out 0.8s infinite; }
+.home .welcome-section > h1 { animation-delay: 0.12s; }
+.home .welcome-section > .welcome-text { animation-delay: 0.2s; }
+.home .welcome-section > .setup-btn { animation-delay: 0.28s; }
+
+/* ---------- 4 quick cards: glass ---------- */
+.home .quick-card {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+          backdrop-filter: blur(10px) saturate(140%);
+  transition: transform 0.25s, background 0.25s, border-color 0.25s;
+  animation: riseIn 0.5s ease backwards;
+  animation-delay: calc(var(--i, 0) * 60ms + 250ms);
+}
+.home .quick-card:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  transform: translateY(-4px);
+}
+.home .quick-card h3 { color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); }
+.home .quick-card p  { color: #f0eefb; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+
+.home .assistant-card { background: rgba(37, 99, 235, 0.20) !important; }
+.home .itinerary-card { background: rgba(220, 38, 38, 0.18) !important; }
+.home .explore-card   { background: rgba(13, 148, 136, 0.20) !important; }
+.home .budget-card    { background: rgba(22, 163, 74, 0.18) !important; }
+
+.voice-circle { animation: pulseRing 2.6s ease-out infinite; }
+
+/* ---------- Destination cards + AI banner: glass, background photo dikhe ---------- */
+.home .destination-card {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+          backdrop-filter: blur(10px) saturate(140%);
+}
+.home .destination-details h3 { color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); }
+.home .destination-details p  { color: #f0eefb; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+
+.home .ai-banner {
+  background: linear-gradient(120deg, rgba(109, 40, 217, 0.28), rgba(217, 70, 239, 0.12));
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+          backdrop-filter: blur(10px) saturate(140%);
+}
+.home .ai-banner-content p:last-child { color: #f0eefb; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+
+/* Photo par violet text dikhta nahi, isliye halka */
+.home .eyebrow { color: #d8ccff; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+.home .view-all { color: #e4dbff; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+.home .section-header h2,
+.home .ai-banner-content h2 { color: #fff; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
+.home .chat-note { color: #e0def2; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6); }
+
+/* ---------- Scroll reveal ---------- */
+.reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.45s ease, transform 0.45s ease; }
+.reveal.in-view { opacity: 1; transform: none; }
+.reveal-fade { opacity: 0; transition: opacity 0.4s ease; }
+.reveal-fade.in-view { opacity: 1; }
+.destination-grid.in-view .destination-card {
+  animation: riseIn 0.45s ease backwards;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+
+/* ---------- Hover ---------- */
+.destination-image { transition: transform 0.6s ease; }
+.destination-card:hover .destination-image { transform: scale(1.05); }
+.category { transition: transform 0.15s, background 0.15s, border-color 0.15s; }
+.category:hover { transform: translateY(-2px); }
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide, .home .welcome-section > *, .home .quick-card,
+  .voice-circle, .destination-grid .destination-card { animation: none !important; }
+  .hero-slide.s1 { opacity: 1; }
+  .reveal, .reveal-fade { opacity: 1; transform: none; transition: none; }
+}
+
+
+/* =====================================================================
+   BAAKI SAARE PAGES: wahi P1-P4 background + animation
+   (bg.js har page par .hero-bg inject karta hai aur body par .has-bg lagata hai)
+   ===================================================================== */
+
+/* Content photo ke upar rahe */
+body.has-bg .main-content { position: relative; z-index: 1; }
+
+/* Inner pages par overlay thoda gehra, taaki forms/cards padhne mein aayein */
+body.has-bg:not(.home) .hero-shade {
+  background:
+    linear-gradient(180deg, rgba(7, 7, 15, 0.55) 0%, rgba(7, 7, 15, 0.62) 60%, rgba(7, 7, 15, 0.72) 100%),
+    radial-gradient(900px 420px at 85% 0%, rgba(139, 92, 246, 0.16), transparent 70%);
+}
+
+/* Topbar halka glass */
+body.has-bg:not(.home) .topbar { background: rgba(7, 7, 15, 0.45); }
+
+/* Cards / panels: glass (peeche photo halki dikhe, text saaf rahe) */
+body.has-bg:not(.home) .panel-card,
+body.has-bg:not(.home) .trip-form,
+body.has-bg:not(.home) .trip-card,
+body.has-bg:not(.home) .place-card,
+body.has-bg:not(.home) .stat,
+body.has-bg:not(.home) .day-card,
+body.has-bg:not(.home) .tl-day,
+body.has-bg:not(.home) .event-card,
+body.has-bg:not(.home) .info-row,
+body.has-bg:not(.home) .weather-card,
+body.has-bg:not(.home) .profile-card,
+body.has-bg:not(.home) .auth-card,
+body.has-bg:not(.home) .msg.bot {
+  background: rgba(15, 12, 30, 0.5);
+  border-color: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+          backdrop-filter: blur(12px) saturate(140%);
+}
+body.has-bg:not(.home) .tab,
+body.has-bg:not(.home) .page-sub,
+body.has-bg:not(.home) .result-count,
+body.has-bg:not(.home) .progress-note,
+body.has-bg:not(.home) .empty-state p { color: #d9d7ee; }
+body.has-bg:not(.home) .page-head h1,
+body.has-bg:not(.home) .empty-state h3 { text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6); }
+
+/* Assistant page: chat bar ka dark fade hatao */
+body.has-bg:not(.home) .chat-area {
+  background: linear-gradient(180deg, transparent, rgba(7, 7, 15, 0.55) 55%);
+}
+
+/* Page khulne par content halka upar aata hai */
+body.has-bg:not(.home) .content-area > * { animation: riseIn 0.5s ease backwards; }
+body.has-bg:not(.home) .content-area > *:nth-child(2) { animation-delay: 0.08s; }
+body.has-bg:not(.home) .content-area > *:nth-child(3) { animation-delay: 0.16s; }
+body.has-bg:not(.home) .content-area > *:nth-child(n+4) { animation-delay: 0.24s; }
+
+@media (prefers-reduced-motion: reduce) {
+  body.has-bg .content-area > * { animation: none !important; }
+}

@@ -88,3 +88,30 @@ function buildSidebar() {
 
 const sidebarRoot = document.getElementById("sidebar");
 if (sidebarRoot) sidebarRoot.outerHTML = buildSidebar();
+
+// Har page par P1-P4 background photos lagao (home par HTML mein pehle se hai)
+(function () {
+    function addBackground() {
+        if (location.pathname.toLowerCase().includes("assistant")) return;
+        if (!document.querySelector(".main-content")) return;
+        document.body.classList.add("has-bg");
+        if (document.querySelector(".hero-bg")) return;
+
+        const bg = document.createElement("div");
+        bg.className = "hero-bg";
+        bg.setAttribute("aria-hidden", "true");
+        bg.innerHTML =
+            '<div class="hero-slide s1"></div>' +
+            '<div class="hero-slide s2"></div>' +
+            '<div class="hero-slide s3"></div>' +
+            '<div class="hero-slide s4"></div>' +
+            '<div class="hero-shade"></div>';
+        document.body.insertBefore(bg, document.body.firstChild);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", addBackground);
+    } else {
+        addBackground();
+    }
+})();

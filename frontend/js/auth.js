@@ -1,6 +1,3 @@
-// Login / Register: ab asli backend (FastAPI) se jude hain.
-// Password sirf backend ko jaata hai, browser mein kahin save nahi hota.
-
 (function () {
     const form = document.getElementById("authForm");
     const msg = document.getElementById("authMsg");

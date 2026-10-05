@@ -1,5 +1,3 @@
-# /api/auth/register, /api/auth/login, /api/auth/me
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
@@ -48,7 +46,6 @@ def register(data: RegisterIn, db: Session = Depends(get_db)):
     try:
         db.commit()
     except IntegrityError:
-        # Do log ek saath same email se bane toh
         db.rollback()
         raise HTTPException(status_code=409, detail="An account with this email already exists.")
     db.refresh(user)
@@ -59,8 +56,6 @@ def register(data: RegisterIn, db: Session = Depends(get_db)):
 @router.post("/login", response_model=TokenOut)
 def login(data: LoginIn, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.email == data.email.lower()))
-
-    # Email galat ho ya password, jawab ek hi hai (kisi ko andaza na lage ki kaunsa email registered hai)
     hashed = user.password_hash if user else DUMMY_HASH
     password_ok = verify_password(data.password, hashed)
 

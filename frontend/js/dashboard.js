@@ -1,5 +1,3 @@
-// My Trips: backend (database) se trips laata hai aur cards dikhata hai.
-
 requireLogin();
 
 const list = document.getElementById("tripList");

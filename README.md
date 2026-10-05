@@ -121,6 +121,9 @@ The **demo video is the preferred way to explore the project**, as the current R
 
 ---
 
+## Project Structure
+
+```text
 raahix/
 │
 ├── backend/
@@ -172,6 +175,11 @@ raahix/
 ├── .python-version
 ├── README.md
 └── requirements.txt
+```
+
+> The structure may evolve as additional features are implemented.
+
+---
 
 ## Getting Started
 

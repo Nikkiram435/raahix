@@ -1,5 +1,3 @@
-// Budget: trip ke kharche jodta hai aur chart banata hai. Kharche backend (database) mein save hote hain.
-
 requireLogin();
 
 const CATEGORIES = [
@@ -43,7 +41,7 @@ function colorOf(name) {
     return c ? c.color : "#94a3b8";
 }
 
-// Naye kharche backend ko bhejo, jawab mein aayi trip se list update karo
+
 async function saveExpenses(trip, expenses) {
     const updated = await Trips.update(trip.id, { expenses: expenses });
     trips = trips.map((t) => (t.id === updated.id ? updated : t));

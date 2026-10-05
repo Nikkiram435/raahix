@@ -1,4 +1,3 @@
-# Database ki tables: User, Trip, SavedPlace aur Place (Geoapify se aaye places ka cache).
 
 from datetime import date, datetime, timezone
 
@@ -40,12 +39,12 @@ class Trip(Base):
 
 class SavedPlace(Base):
     __tablename__ = "saved_places"
-    # Ek user ek place ko do baar save nahi kar sakta
+    
     __table_args__ = (UniqueConstraint("user_id", "place_id", name="uq_user_place"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    place_id: Mapped[str] = mapped_column(String(100))   # ab text: "f7" (featured) ya Geoapify ki id
+    place_id: Mapped[str] = mapped_column(String(100))   
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=lambda: datetime.now(timezone.utc)
     )

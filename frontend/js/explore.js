@@ -1,6 +1,3 @@
-// Explore: city search, category tabs aur infinite scroll.
-// Featured places (places-data.js) pehle, phir backend (Geoapify) se baaki, scroll karne par.
-
 const grid = document.getElementById("placeGrid");
 const countEl = document.getElementById("resultCount");
 const statusEl = document.getElementById("listStatus");
@@ -15,7 +12,7 @@ const params = new URLSearchParams(window.location.search);
 let city = (params.get("city") || "Mumbai").trim().slice(0, 80) || "Mumbai";
 let activeCategory = "All";
 
-let items = [];            // backend se aayi places
+let items = [];            
 let seen = new Set();
 let page = 0;
 let hasMore = false;
@@ -23,7 +20,7 @@ let loading = false;
 let emptyStreak = 0;
 let apiError = "";
 let placeLabel = "";
-let requestId = 0;         // purane jawab ko pehchanne ke liye
+let requestId = 0;         
 let savedIds = [];
 const pending = new Set();
 
@@ -102,7 +99,6 @@ function render() {
     }
 }
 
-// Sentinel (list ke neeche ka chhota point) screen ke paas aaye toh agla page lao
 function maybeLoadMore() {
     if (loading || !hasMore) return;
     if (sentinel.getBoundingClientRect().top < window.innerHeight + 300) loadMore();
@@ -116,7 +112,7 @@ async function loadMore() {
 
     try {
         const data = await Places.search(city, activeCategory, page);
-        if (mine !== requestId) return;   // is dauran search badal gayi
+        if (mine !== requestId) return;   
 
         placeLabel = data.place;
         let added = 0;
@@ -155,14 +151,14 @@ function startSearch() {
     loading = false;
     hasMore = !!getToken();
 
-    // NAYA: city aur tab URL mein save karo, taaki page reload ho toh bhi na khoyein
+    
     const url = new URL(window.location.href);
     url.searchParams.set("city", city);
     url.searchParams.set("cat", activeCategory);
     history.replaceState(null, "", url);
 
     render();
-    loadMore();   // pehla page turant
+    loadMore();   
 }
 
 tabs.forEach((tab) => {
@@ -188,7 +184,6 @@ window.addEventListener("resize", maybeLoadMore);
 async function init() {
     cityInput.value = city;
 
-    // Home ya Place page se aaya ho (explore.html?city=Goa&cat=Stays)
     const cat = params.get("cat");
     if (cat && [...tabs].some((t) => t.dataset.cat === cat)) {
         activeCategory = cat;

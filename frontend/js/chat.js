@@ -1,6 +1,3 @@
-// RAAHIX chat: sawaal backend (/api/chat) ko jaata hai, jawab Gemini se aata hai.
-// Baatcheet sirf is page par rehti hai (refresh par mit jaati hai).
-
 requireLogin();
 
 const input = document.getElementById("chatInput");
@@ -9,8 +6,8 @@ const hero = document.getElementById("chatHero");
 const messages = document.getElementById("messages");
 const stage = document.getElementById("chatStage");
 
-const MAX_HISTORY = 19;   // backend 20 tak leta hai, aur list user se shuru aur user par khatam honi chahiye
-const MAX_CONTENT = 2000; // backend ek message mein itne hi akshar leta hai
+const MAX_HISTORY = 19;   
+const MAX_CONTENT = 2000; 
 
 let history = [];
 let busy = false;
@@ -20,7 +17,7 @@ input.maxLength = MAX_CONTENT;
 function addMessage(text, who) {
     const div = document.createElement("div");
     div.className = "msg " + who;
-    div.textContent = text;              // textContent: text safe rehta hai
+    div.textContent = text;              
     messages.appendChild(div);
     stage.scrollTop = stage.scrollHeight;
     return div;
@@ -37,7 +34,7 @@ async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    if (hero) hero.style.display = "none";   // "Where to today?" hata do
+    if (hero) hero.style.display = "none";   
 
     addMessage(text, "user");
     history.push({ role: "user", content: text });
@@ -63,7 +60,7 @@ async function sendMessage() {
     } catch (err) {
         reply.textContent = err.message;
         reply.classList.add("error");
-        history.pop();   // fail hua sawaal history se hata do, taaki agli baar list sahi rahe
+        history.pop();   
     } finally {
         setBusy(false);
         input.focus();
@@ -79,7 +76,7 @@ input.addEventListener("keydown", (e) => {
     }
 });
 
-// Where / When / Who / Budget chips: click par input mein starter text aata hai
+
 const starters = {
     Where: "I want to visit ",
     When: "I'm planning to travel in ",

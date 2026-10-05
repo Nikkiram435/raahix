@@ -1,5 +1,3 @@
-# Password hashing (bcrypt) aur login token (JWT).
-
 import os
 from datetime import datetime, timedelta, timezone
 
@@ -21,8 +19,7 @@ def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
-# Jab email hi galat ho, tab bhi hum ek nakli check chalate hain,
-# taaki jawab dene mein lagne wale time se koi email ka andaza na laga sake.
+
 DUMMY_HASH = hash_password("not-a-real-password")
 
 

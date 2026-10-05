@@ -121,53 +121,57 @@ The **demo video is the preferred way to explore the project**, as the current R
 
 ---
 
-## Project Structure
-
-```text
-RAAHIX/
+raahix/
 │
 ├── backend/
-│   ├── main.py
+│   ├── tests/
+│   │   ├── conftest.py
+│   │   ├── test_auth.py
+│   │   ├── test_misc.py
+│   │   ├── test_places.py
+│   │   ├── test_saved.py
+│   │   └── test_trips.py
+│   │
+│   ├── auth_routes.py
+│   ├── chat_routes.py
 │   ├── database.py
+│   ├── main.py
 │   ├── models.py
-│   ├── schemas.py
-│   │
-│   ├── routers/
-│   │   ├── auth_routes.py
-│   │   ├── trips_routes.py
-│   │   ├── saved_routes.py
-│   │   └── chat_routes.py
-│   │
+│   ├── places_routes.py
+│   ├── pytest.ini
 │   ├── requirements.txt
-│   └── .env
+│   ├── saved_routes.py
+│   ├── schemas.py
+│   ├── security.py
+│   ├── trip_schemas.py
+│   ├── trips_routes.py
+│   └── weather_routes.py
 │
 ├── frontend/
-│   ├── index.html
-│   ├── login.html
-│   ├── register.html
-│   ├── explore.html
-│   ├── trip.html
-│   ├── saved.html
-│   │
+│   ├── assets/
+│   │   └── images/
 │   ├── css/
 │   ├── js/
-│   └── assets/
+│   ├── assistant.html
+│   ├── budget.html
+│   ├── create-trip.html
+│   ├── dashboard.html
+│   ├── events.html
+│   ├── explore.html
+│   ├── flights.html
+│   ├── index.html
+│   ├── itinerary.html
+│   ├── login.html
+│   ├── place.html
+│   ├── profile.html
+│   ├── register.html
+│   ├── saved.html
+│   └── trip-details.html
 │
-├── screenshots/
-│   ├── home.png
-│   ├── explore.png
-│   ├── trip-planner.png
-│   ├── dashboard.png
-│   ├── saved-places.png
-│   └── ai-assistant.png
-│
+├── .gitignore
+├── .python-version
 ├── README.md
-└── .gitignore
-```
-
-> The structure may evolve as additional features are implemented.
-
----
+└── requirements.txt
 
 ## Getting Started
 

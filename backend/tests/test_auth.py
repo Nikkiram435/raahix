@@ -1,4 +1,4 @@
-# Register, login aur /me ke tests.
+# Register, login tests.
 
 from database import SessionLocal
 from models import User
@@ -54,7 +54,7 @@ def test_wrong_password_and_unknown_email_look_the_same(client):
     unknown = client.post("/api/auth/login", json={"email": "nobody@example.com", "password": "password123"})
     assert wrong_pw.status_code == 401
     assert unknown.status_code == 401
-    # Dono ka jawab ek jaisa, taaki koi andaza na laga sake ki kaunsa email registered hai
+    
     assert wrong_pw.json() == unknown.json()
 
 

@@ -1,6 +1,3 @@
-// RAAHIX common JS: har page par chalta hai.
-
-// Tabs: .tab button par click karne se uska data-tab wala .tab-panel dikhta hai
 document.querySelectorAll(".tabs").forEach((group) => {
     const tabs = group.querySelectorAll(".tab");
 

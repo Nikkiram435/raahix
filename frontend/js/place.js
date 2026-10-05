@@ -1,5 +1,3 @@
-// Place details: place.html?id=... Featured place ("f7") local data se, baaki backend (Geoapify data) se.
-
 const root = document.getElementById("placeDetail");
 const ID_OK = /^[A-Za-z0-9_-]{1,100}$/;
 let place = null;
@@ -10,7 +8,7 @@ function whereOf(p) {
     return p.address || [p.area, p.city].filter(Boolean).join(", ");
 }
 
-// Google Maps ka seedha search link (bina key ke). Hours, phone aur reviews wahin dikhte hain.
+
 function mapsUrl(p) {
     return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + ", " + whereOf(p));
 }
@@ -109,7 +107,7 @@ function render() {
     root.append(hero, actions);
 
     if (place.about) {
-        // Featured place: hamara likha description aur tips
+        
         const about = el("section", "place-section");
         about.append(el("h2", "", "About"), el("p", "place-about", place.about));
         const tags = el("div", "trip-tags");
@@ -133,7 +131,7 @@ function render() {
             root.append(section);
         }
     } else {
-        // Backend wali place: OpenStreetMap ka data
+        
         const info = el("section", "place-section");
         info.append(el("h2", "", "Details"), buildInfo(place));
         info.append(el("p", "weather-note",
@@ -175,7 +173,7 @@ async function init() {
         isSaved = (await Saved.list()).includes(place.id);
         render();
     } catch (err) {
-        // Saved ki halat na mile toh bhi page theek rehta hai
+        
     }
 }
 

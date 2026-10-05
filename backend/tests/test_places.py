@@ -1,5 +1,3 @@
-# Places ke tests. Asli Geoapify ko kabhi call nahi karte, uski jagah nakli jawab lagate hain.
-
 import pytest
 
 import places_routes
@@ -41,7 +39,7 @@ def fake_geoapify(monkeypatch):
                 return {"features": [
                     feature("p1", "Beach Shack", ["catering.restaurant"]),
                     feature("p2", "Sea View Hotel", ["accommodation.hotel"]),
-                ] + unnamed}   # kul 20, yaani aur pages hain
+                ] + unnamed}  
             return {"features": []}
         if path == "/v2/place-details":
             return {"features": [{"properties": fake["details"]}]}

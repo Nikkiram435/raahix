@@ -1,5 +1,3 @@
-# Trips ka data kaisa hona chahiye. Hadd se bahar ka data yahin rok diya jaata hai.
-
 from datetime import date
 from typing import Annotated, Literal
 

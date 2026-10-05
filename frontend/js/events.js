@@ -1,5 +1,3 @@
-// Events: festivals ki hamari apni list. Dates har saal badalti hain, isliye "roughly" likha hai.
-
 const EVENTS = [
     { name: "Diwali", months: [10, 11], when: "October or November (follows the lunar calendar)", where: "All over India",
       about: "The festival of lights, celebrated with oil lamps, sweets, fireworks and family gatherings. Cities and markets are decorated and lit up.",

@@ -1,5 +1,8 @@
+from pathlib import Path
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 import models  # noqa: F401  (isse tables register hoti hain)
 from auth_routes import router as auth_router
@@ -14,7 +17,8 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="RAAHIX API")
 
-# Frontend (Live Server, port 5500) ko backend se baat karne ki ijazat
+# Local development (Live Server) ke liye. Deploy par frontend usi site se aata hai,
+# to CORS ki zaroorat nahi padti.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"],
@@ -30,7 +34,12 @@ app.include_router(weather_router)
 app.include_router(places_router)
 
 
-
 @app.get("/api/health")
 def health():
     return {"status": "ok", "app": "RAAHIX"}
+
+
+# Frontend serve karo. Yeh SABSE LAST mein rahe, warna API ke raste band ho jayenge.
+FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+if FRONTEND_DIR.exists():
+    app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

@@ -1,6 +1,10 @@
 // Backend se baat karne ke liye common helper. Har page ka JS isi ko use karega.
 
-const API_BASE = "http://127.0.0.1:8000";
+// Live Server (port 5500) par local backend, baaki jagah usi site ka backend
+const API_BASE =
+    (location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "5500"
+        ? "http://127.0.0.1:8000"
+        : "";
 
 function getToken() {
     try { return localStorage.getItem("raahix_token"); } catch (err) { return null; }

@@ -1,7 +1,3 @@
-// Sample places. Phase 8 mein yeh real API se aayega.
-// Explore, Saved aur Place pages isi file ko use karte hain.
-// Saved places backend (database) mein rehte hain, js/api.js ka Saved helper dekho.
-
 const PLACES = [
     // Mumbai
     { id: 1, name: "Gateway of India", city: "Mumbai", category: "Locations", emoji: "🏛", tags: "Landmark, Colaba, Sea views",
@@ -109,7 +105,7 @@ function el(tag, className, text) {
     return node;
 }
 
-// Text id se 0 se 5 ke beech ka number (card ka rang chunne ke liye)
+
 function coverIndex(id) {
     let h = 0;
     for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) % 6007;

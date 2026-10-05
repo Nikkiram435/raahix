@@ -1,6 +1,3 @@
-// Trip details: backend se trip laata hai, din-ba-din plan dikhata aur badalta hai.
-// Neeche mausam (weather) bhi dikhta hai, jo /api/weather se aata hai.
-
 requireLogin();
 
 const root = document.getElementById("tripDetail");
@@ -8,7 +5,7 @@ const MAX_DAYS_SHOWN = 30;
 let trip = null;
 let busy = false;
 
-// Mausam ki halat: "loading", "ok" ya "error"
+
 let weather = { state: "loading", data: null, message: "" };
 
 function el(tag, className, text) {
@@ -36,7 +33,6 @@ function dayCount(start, end) {
 
 // ---------- Mausam ----------
 
-// Open-Meteo ke weather code ka matlab (WMO codes)
 function weatherInfo(code) {
     if (code === 0) return { icon: "☀️", label: "Clear" };
     if (code === 1) return { icon: "🌤️", label: "Mostly clear" };
@@ -77,7 +73,7 @@ function buildWeatherCard(d) {
     return card;
 }
 
-// weatherBox ke andar mausam ka section bharta hai (poora page dobara nahi banata)
+
 function fillWeather(box) {
     if (!box || !trip) return;
     box.innerHTML = "";
@@ -95,7 +91,7 @@ function fillWeather(box) {
         return;
     }
 
-    // Sirf wahi din jo trip ki dates mein aate hain
+   
     const days = weather.data.days.filter((d) => d.date >= trip.startDate && d.date <= trip.endDate);
 
     if (days.length === 0) {
@@ -152,7 +148,7 @@ function buildStat(label, value) {
     return box;
 }
 
-// Poora plan backend ko bhejte hain, jawab mein naya trip aata hai
+
 async function savePlan(newPlan) {
     if (busy) return;
     busy = true;
@@ -247,7 +243,7 @@ function render() {
         buildStat("Per person per day", perDay)
     );
 
-    // Mausam ka section (id isliye ki baad mein load hone par yahi bhara jaaye)
+    
     const weatherBox = el("div", "weather-section");
     weatherBox.id = "weatherBox";
     fillWeather(weatherBox);

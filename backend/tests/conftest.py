@@ -1,22 +1,20 @@
-# Sab tests ke liye common setup: alag database, alag key, saaf shuruaat.
 
 import os
 import tempfile
 from pathlib import Path
 
-# Test ke liye alag database aur key. Yeh imports se PEHLE hona zaroori hai,
-# taaki asli raahix.db aur .env ko tests kabhi na chhuyein.
+# URL
 _tmp = Path(tempfile.mkdtemp(prefix="raahix_test_"))
 os.environ["DATABASE_URL"] = "sqlite:///" + (_tmp / "test.db").as_posix()
 os.environ["SECRET_KEY"] = "test-secret-key-for-pytest-only-1234567890"
-os.environ["GEMINI_API_KEY"] = ""   # tests kabhi asli AI ko call na karein
+os.environ["GEMINI_API_KEY"] = ""   
 os.environ["GEOAPIFY_API_KEY"] = ""
 
-import pytest  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
+import pytest  
+from fastapi.testclient import TestClient  
 
-from database import Base, engine  # noqa: E402
-from main import app  # noqa: E402
+from database import Base, engine  
+from main import app  
 
 
 @pytest.fixture()

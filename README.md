@@ -29,7 +29,7 @@ The project focuses on:
 The **demo video is the preferred way to explore the project**, as the current Railway deployment is hosted under a limited/free trial environment and may become unavailable after the trial period ends.
 
 **Demo Video:**
-[*Add your YouTube / Google Drive / Loom link here*](https://drive.google.com/file/d/1Hit4yGz5O5Kb6PiHOplO_5_UQT_PEye9/view?usp=sharing)
+(https://drive.google.com/file/d/1Hit4yGz5O5Kb6PiHOplO_5_UQT_PEye9/view?usp=sharing)
 
 ### Live Application
 

@@ -1,5 +1,3 @@
-// Trip form: check karta hai, phir trip ko backend (database) mein save karta hai.
-
 requireLogin();
 
 const form = document.getElementById("tripForm");
@@ -8,17 +6,17 @@ const startInput = document.getElementById("startDate");
 const endInput = document.getElementById("endDate");
 const submitBtn = form.querySelector("button[type='submit']");
 
-// Aaj se pehle ki date mat chuno
+
 const today = new Date().toISOString().split("T")[0];
 startInput.min = today;
 endInput.min = today;
 
-// Start date badalne par end date ki minimum date bhi badal do
+
 startInput.addEventListener("change", () => {
     endInput.min = startInput.value || today;
 });
 
-// Travel style chips: click par select / unselect
+
 document.querySelectorAll(".style-chip").forEach((chip) => {
     chip.addEventListener("click", () => chip.classList.toggle("selected"));
 });

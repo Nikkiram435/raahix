@@ -1,5 +1,3 @@
-# Health, chat aur weather ke basic tests (asli AI ya weather API ko call kiye bina).
-
 CHAT_BODY = {"messages": [{"role": "user", "content": "Hello"}]}
 
 
@@ -14,7 +12,6 @@ def test_chat_needs_login(client):
 
 
 def test_chat_without_ai_key_fails_cleanly(client, alice):
-    # Tests mein GEMINI_API_KEY khaali hai, isliye saaf 503 aana chahiye, crash nahi
     res = client.post("/api/chat", json=CHAT_BODY, headers=alice)
     assert res.status_code == 503
 

@@ -1,6 +1,3 @@
-# /api/saved: saved places ki list, save karna, hatana. Sab login ke baad hi.
-# place_id ab text hai: "f7" (featured place) ya Geoapify ki id.
-
 import re
 
 from fastapi import APIRouter, Depends, HTTPException, Response

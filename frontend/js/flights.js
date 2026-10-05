@@ -1,5 +1,3 @@
-// Flights: form check karke Google Flights par bhejta hai (RAAHIX khud prices nahi dikhata).
-
 const form = document.getElementById("flightForm");
 const msg = document.getElementById("flightMsg");
 const fromInput = document.getElementById("from");
@@ -15,7 +13,7 @@ depart.min = today;
 ret.min = today;
 depart.addEventListener("change", () => { ret.min = depart.value || today; });
 
-// Trip details se aaye ho toh (flights.html?to=Goa) "To" bhar do
+
 const params = new URLSearchParams(window.location.search);
 if (params.get("to")) toInput.value = params.get("to").slice(0, 60);
 

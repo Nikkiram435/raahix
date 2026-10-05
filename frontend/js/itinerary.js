@@ -1,6 +1,3 @@
-// Itinerary: trip ka din-ba-din plan timeline mein dikhata hai (sirf padhne ke liye).
-// Plan badalne ke liye trip-details.html use hota hai.
-
 requireLogin();
 
 const MAX_DAYS = 30;

@@ -1,5 +1,3 @@
-# Saved places ke tests (place id ab text: "f7" ya Geoapify ki id).
-
 def test_saved_needs_login(client):
     assert client.get("/api/saved").status_code == 401
     assert client.put("/api/saved/f1").status_code == 401

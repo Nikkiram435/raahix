@@ -1,6 +1,3 @@
-// Backend se baat karne ke liye common helper. Har page ka JS isi ko use karega.
-
-// Live Server (port 5500) par local backend, baaki jagah usi site ka backend
 const API_BASE =
     (location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "5500"
         ? "http://127.0.0.1:8000"
@@ -27,7 +24,7 @@ function clearSession() {
     } catch (err) {}
 }
 
-// Login ke bina kholne wale pages: login par bhej do
+
 function requireLogin() {
     if (!getToken()) window.location.href = "login.html";
 }
@@ -35,7 +32,7 @@ function requireLogin() {
 function readError(status, data) {
     if (data && typeof data.detail === "string") return data.detail;
     if (status === 422) {
-        // Backend ka pehla message dikhao (jaise "End date can't be before the start date.")
+
         const first = data && Array.isArray(data.detail) ? data.detail[0] : null;
         if (first && typeof first.msg === "string") return first.msg.replace(/^Value error, /, "");
         return "Please check your details and try again.";
@@ -62,7 +59,7 @@ async function apiRequest(path, { method = "GET", body, auth = false } = {}) {
         throw new Error("Can't reach the server. Is the backend running?");
     }
 
-    // Token purana ya galat ho toh dobara login karwao
+
     if (res.status === 401 && auth) {
         clearSession();
         window.location.href = "login.html";
@@ -77,8 +74,7 @@ async function apiRequest(path, { method = "GET", body, auth = false } = {}) {
 }
 
 // ---------- Trips ----------
-// Backend snake_case use karta hai (start_date), frontend camelCase (startDate).
-// Yeh dono ke beech ka anuvaad yahin hota hai.
+
 
 function tripFromApi(t) {
     return {
@@ -120,7 +116,7 @@ const Trips = {
         return tripFromApi(data);
     },
 
-    // changes mein sirf wahi daalo jo badalna hai, jaise { plan: {...} } ya { expenses: [...] }
+
     async update(id, changes) {
         const data = await apiRequest("/api/trips/" + encodeURIComponent(id), {
             method: "PATCH",
@@ -139,7 +135,7 @@ const Trips = {
 
 const Saved = {
     async list() {
-        return apiRequest("/api/saved", { auth: true });   // [1, 7, ...] place ids
+        return apiRequest("/api/saved", { auth: true });   
     },
 
     async save(placeId) {
